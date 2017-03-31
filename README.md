@@ -1,1 +1,1 @@
-# amlakiaqu
+# amlaki
