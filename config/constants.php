@@ -1,0 +1,8 @@
+<?php
+
+return [
+    'POST_TYPES' => ['STRING', 'NUMBER', 'FLOAT', 'COLOR', 'RANGE', 'SELECT', 'MULTI_SELECT', 'MEDIA', 'RADIO', 'MULTI_SELECT_CHECKBOX'],
+    'DEFAULT_POST_TYPE' => 'STRING',
+    'PHONE_VALIDATION_REGX' => '/^(059|056){1}\d{7}$/'
+    
+];
