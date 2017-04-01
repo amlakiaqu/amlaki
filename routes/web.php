@@ -17,4 +17,10 @@ Route::get('/', function () {
 
 Auth::routes();
 
+Route::group(['prefix' => config('backpack.base.route_prefix', 'admin')], function () {
+    Route::get('/login', 'Auth\AdminLoginController@showLoginForm')->name('admin.login');
+    Route::post('/login', 'Auth\AdminLoginController@login');
+    Route::get('/logout', 'Auth\AdminLoginController@logout');
+});
+
 Route::get('/home', 'HomeController@index');

@@ -48,6 +48,18 @@ return [
             'root' => storage_path('app'),
         ],
 
+        // used for Backpack/CREUD
+        'uploads' => [
+            'driver' => 'local',
+            'root' => public_path('uploads'),
+        ],
+
+        // used for Backpack/LogManager
+        'storage' => [
+            'driver' => 'local',
+            'root'   => storage_path(),
+        ],
+
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),
