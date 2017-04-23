@@ -10,7 +10,9 @@
         "backpack/crud": "^3.2",
         "backpack/logmanager": "^2.3",
         "laravel/framework": "5.4.*",
-        "laravel/tinker": "~1.0"
+        "laravel/tinker": "~1.0",
+        "pusher/pusher-php-server": "^2.6",
+        "webpatser/laravel-uuid": "2.*"
     },
     "require-dev": {
         "backpack/generators": "^1.1",

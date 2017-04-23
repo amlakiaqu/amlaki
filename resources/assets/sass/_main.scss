@@ -1,0 +1,20 @@
+body {
+    padding-top: $body-padding-top;
+}
+
+.form-errors {
+    margin-bottom: 15px;
+    color: $error-text;
+}
+
+.bt-icon-lg {
+    font-size: 24px;
+}
+
+.table.center td,
+.table.center th,
+.table td.center,
+.table th.center,
+p.center {
+    text-align: center;
+}

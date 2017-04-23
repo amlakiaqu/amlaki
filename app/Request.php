@@ -44,4 +44,5 @@ class Request extends Model
      * Get the Request properties
      */
     public function properties(){return $this->belongsToMany('App\Property', 'request_property', 'request_id', 'property_id')->withPivot('value');}
+
 }

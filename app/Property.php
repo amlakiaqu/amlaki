@@ -26,10 +26,9 @@ class Property extends Model
      * Table Columns:
      *  - id
      *  - title
-     *  - hint
      *  - code
      *  - value_type
-     *  - possible_values
+     *  - extra_settings
      */
 
     # Relationships
@@ -38,4 +37,5 @@ class Property extends Model
      * Get the Property categories
      */
     public function categories(){return $this->belongsToMany('App\Category', 'category_property', 'property_id', 'category_id')->withPivot('required');}
+
 }

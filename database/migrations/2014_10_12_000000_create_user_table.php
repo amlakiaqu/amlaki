@@ -25,6 +25,7 @@ class CreateUserTable extends Migration
             $table->boolean('is_admin')->default(false);
             $table->string('image', 255)->nullable();
             $table->string('phone', 10);
+            $table->string('api_token', 60)->nullable();
             $table->rememberToken();
 
             // Add Indexes

@@ -3,12 +3,26 @@
 @import url(https://fonts.googleapis.com/css?family=Raleway:300,400,600);
 @import url(https://fonts.googleapis.com/css?family=Reem+Kufi);
 
-
 // Variables
 @import "variables";
 
 // Bootstrap
 @import "node_modules/bootstrap-sass/assets/stylesheets/bootstrap";
 
+// Font Awesome
+@import 'node_modules/font-awesome/scss/font-awesome.scss';
+
+// Main Application Style
+@import "main";
+
 // Custom Navbar Style
 @import "navbar";
+
+// Sidebar Style
+@import "sidebar";
+
+// Login Modal Style
+@import "modals";
+
+// Post Card Style
+@import "post";

@@ -39,7 +39,7 @@ class RouteServiceProvider extends ServiceProvider
 
         $this->mapWebRoutes();
 
-        //
+        $this->mapAdminRoutes();
     }
 
     /**
@@ -67,7 +67,21 @@ class RouteServiceProvider extends ServiceProvider
     {
         Route::prefix('api')
              ->middleware('api')
-             ->namespace($this->namespace)
+             ->namespace($this->namespace . '\Api')
              ->group(base_path('routes/api.php'));
+    }
+
+    /**
+     * Define the "admin" routes for the application.
+     *
+     *
+     * @return void
+     */
+    protected function mapAdminRoutes()
+    {
+        Route::prefix(config('backpack.base.route_prefix', 'admin'))
+             ->middleware('web')
+             ->namespace($this->namespace . '\Admin')
+             ->group(base_path('routes/admin.php'));
     }
 }

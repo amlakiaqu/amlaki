@@ -1,4 +1,3 @@
-
 window._ = require('lodash');
 
 /**
@@ -25,12 +24,12 @@ window.Vue = require('vue');
  * CSRF token as a header based on the value of the "XSRF" token cookie.
  */
 
-window.axios = require('axios');
-
-window.axios.defaults.headers.common = {
-    'X-CSRF-TOKEN': window.Laravel.csrfToken,
-    'X-Requested-With': 'XMLHttpRequest'
-};
+// window.axios = require('axios');
+//
+// window.axios.defaults.headers.common = {
+//     'X-CSRF-TOKEN': window.Laravel.csrfToken,
+//     'X-Requested-With': 'XMLHttpRequest'
+// };
 
 /**
  * Echo exposes an expressive API for subscribing to channels and listening
@@ -46,3 +45,13 @@ window.axios.defaults.headers.common = {
 //     broadcaster: 'pusher',
 //     key: 'your-pusher-key'
 // });
+
+/**
+ * Load Application Javascript Files
+ */
+require('./constants.js');
+require('./main.js');
+require('./helpers.js');
+require('./handlers.js');
+require('./sidebar');
+require('./lodash_templates_helper');
