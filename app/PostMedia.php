@@ -34,4 +34,5 @@ class PostMedia extends Model
      * Get the media post .
      */
     public function post(){return $this->belongsTo('App\Post');}
+
 }

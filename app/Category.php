@@ -33,4 +33,10 @@ class Category extends Model
      * Get the Category properties
      */
     public function properties(){return $this->belongsToMany('App\Property', 'category_property', 'category_id', 'property_id')->withPivot('required');}
+
+    /**
+     * Get the category posts
+     */
+    public function posts(){return $this->hasMany('App\Post');}
+
 }

@@ -3,8 +3,13 @@
 namespace App\Exceptions;
 
 use Exception;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Session\TokenMismatchException;
+use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class Handler extends ExceptionHandler
 {
@@ -14,12 +19,18 @@ class Handler extends ExceptionHandler
      * @var array
      */
     protected $dontReport = [
-        \Illuminate\Auth\AuthenticationException::class,
-        \Illuminate\Auth\Access\AuthorizationException::class,
-        \Symfony\Component\HttpKernel\Exception\HttpException::class,
-        \Illuminate\Database\Eloquent\ModelNotFoundException::class,
-        \Illuminate\Session\TokenMismatchException::class,
-        \Illuminate\Validation\ValidationException::class,
+        AuthenticationException::class,
+        AuthorizationException::class,
+        HttpException::class,
+        ModelNotFoundException::class,
+        TokenMismatchException::class,
+        ValidationException::class,
+    ];
+
+    // list of exceptions that converted by laravel to json
+    protected $jsonableExceptions = [
+        AuthenticationException::class,
+        ValidationException::class,
     ];
 
     /**
@@ -40,10 +51,50 @@ class Handler extends ExceptionHandler
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \Exception  $exception
-     * @return \Illuminate\Http\Response
+     * @return \Symfony\Component\HttpFoundation\Response
      */
     public function render($request, Exception $exception)
     {
+        // If the request wants JSON (AJAX doesn't always want JSON)
+        if ($request->wantsJson() && !in_array(get_class($exception), $this->jsonableExceptions))
+        {
+            if($exception instanceof ModelNotFoundException){
+                $status = 404;
+                $model = $exception->getModel();
+                $strExploded = explode("\\",$model);
+                $modelName = end($strExploded);
+                $modelName = strtolower($modelName);
+                $response = ["error" => "can not find $modelName."];
+                return response()->json($response, $status);
+            }
+            // Define the response
+            $response = [
+                'errors' => 'Sorry, something went wrong.'
+            ];
+
+            // If the app is in debug mode
+            if (config('app.debug'))
+            {
+                // Add the exception class name, message and stack trace to response
+                $response['exception'] = get_class($exception); // Reflection might be better here
+                $response['message'] = $exception->getMessage();
+                $response['trace'] = $exception->getTrace();
+            }
+
+            // Default response of 400
+            $status = 400;
+
+            // If this exception is an instance of HttpException, Then get response status code from exception.
+            if ($exception instanceof HttpException)
+            {
+                // Grab the HTTP status code from the Exception
+                $status = $exception->getStatusCode();
+            }
+
+            // Return a JSON response with the response array and status code
+            return response()->json($response, $status);
+        }
+
         return parent::render($request, $exception);
     }
 
@@ -57,7 +108,7 @@ class Handler extends ExceptionHandler
     protected function unauthenticated($request, AuthenticationException $exception)
     {
         if ($request->expectsJson()) {
-            return response()->json(['error' => 'Unauthenticated.'], 401);
+            return response()->json(['error' => $exception->getMessage()], 401);
         }
 
         return redirect()->guest(route('login'));

@@ -25,7 +25,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'username', 'email', 'password', 'phone', 'image'
+        'name', 'username', 'email', 'password', 'phone', 'address', 'image', 'api_token'
     ];
 
     /**
@@ -34,7 +34,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token', 'is_admin'
+        'password', 'remember_token', 'is_admin', "created_at", "updated_at", "deleted_at"
     ];
 
     /**
@@ -70,4 +70,5 @@ class User extends Authenticatable
     {
         $this->notify(new ResetPasswordNotification($token));
     }
+
 }

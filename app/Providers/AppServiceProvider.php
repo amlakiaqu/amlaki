@@ -23,6 +23,13 @@ class AppServiceProvider extends ServiceProvider
             $pattern = config('constants.PHONE_VALIDATION_REGX');
             return preg_match($pattern, $value) == 1;
         }, __('Enter a valid phone number'));
+
+        // Set the locale of faker
+        /*
+        $this->app->singleton(\Faker\Generator::class, function () {
+            return \Faker\Factory::create('ar_JO');
+        });
+        */
     }
 
     /**

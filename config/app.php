@@ -94,6 +94,17 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | List of supported languages
+    |--------------------------------------------------------------------------
+    |
+    | The supported languages list used to determines if the locale is supported or not
+    |
+    */
+
+    'supported_languages' => ["en", "ar"],
+
+    /*
+    |--------------------------------------------------------------------------
     | Encryption Key
     |--------------------------------------------------------------------------
     |
@@ -163,23 +174,23 @@ return [
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
 
-        /*
+        /**
          * Package Service Providers...
          */
         Laravel\Tinker\TinkerServiceProvider::class,
 
-        /*
+        /**
          * Application Service Providers...
          */
         App\Providers\AppServiceProvider::class,
         App\Providers\AuthServiceProvider::class,
-        // App\Providers\BroadcastServiceProvider::class,
+        App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
 
-        /*
-        * Backpack Service Providers...
-        */
+        /**
+         * Backpack Service Providers...
+         */
         Backpack\Base\BaseServiceProvider::class,
         Backpack\CRUD\CrudServiceProvider::class,
         Backpack\LogManager\LogManagerServiceProvider::class,
@@ -232,6 +243,7 @@ return [
         'URL' => Illuminate\Support\Facades\URL::class,
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
+        'Uuid' => Webpatser\Uuid\Uuid::class,
 
     ],
 

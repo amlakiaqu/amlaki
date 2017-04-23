@@ -12,6 +12,7 @@ class Post extends Model
      * @var string
      */
     protected $table = "post";
+    protected $name = "post";
 
     /**
      * Table Columns:
@@ -45,10 +46,11 @@ class Post extends Model
     /**
      * Get the Post properties
      */
-    public function properties(){return $this->belongsToMany('App\Property', 'post_property', 'post_id', 'property_id')->withPivot('required');}
+    public function properties(){return $this->belongsToMany('App\Property', 'post_property', 'post_id', 'property_id')->withPivot('value');}
 
     /**
      * Get the post medias
      */
     public function medias(){return $this->hasMany('App\PostMedia');}
+
 }
