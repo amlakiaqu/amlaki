@@ -1,0 +1,6 @@
+html[dir='rtl'] .input-group-addon:first-child {
+  border-left: 0;
+  border-right: 1px solid #ccc;
+}
+
+/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInJlc291cmNlcy9hc3NldHMvc2Fzcy9pbmRleC5zY3NzIl0sInNvdXJjZXNDb250ZW50IjpbImh0bWxbZGlyPSdydGwnXSB7XG4gICAgLmlucHV0LWdyb3VwLWFkZG9uOmZpcnN0LWNoaWxkIHtcbiAgICAgICAgYm9yZGVyLWxlZnQ6IDA7XG4gICAgICAgIGJvcmRlci1yaWdodDogMXB4IHNvbGlkICNjY2M7XG4gICAgfVxufVxuIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBLEFBQ0ksSUFEQSxDQUFBLEFBQUEsR0FBQyxDQUFJLEtBQUssQUFBVCxFQUNELGtCQUFrQixBQUFBLFlBQVksQ0FBQztFQUMzQixXQUFXLEVBQUUsQ0FBQztFQUNkLFlBQVksRUFBRSxjQUFjO0NBQy9CIn0= */

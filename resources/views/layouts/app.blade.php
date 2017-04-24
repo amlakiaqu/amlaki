@@ -208,6 +208,8 @@
     </div>
 
     <!-- Scripts -->
+    <script src="https://use.fontawesome.com/a8e79672ec.js"></script>
+
     <script src="{{ mix('js/app.js') }}"></script>
 
     <script src="https://use.fontawesome.com/a8e79672ec.js"></script>
