@@ -29,3 +29,6 @@ mix.copy('resources/assets/js/home.js', 'public/js')
     .copy('node_modules/bootstrap-validator/dist/validator.min.js', 'public/js');
 
 mix.copy('resources/assets/css/vendors/', 'public/css');
+
+/* Copy Lang files */
+mix.copyDirectory('resources/assets/js/lang/', 'public/js/lang');

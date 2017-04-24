@@ -8,6 +8,7 @@
 Homestead.json
 Homestead.yaml
 .env
-*.cache
+.env.*
+!.env.example
 *.log
 *~

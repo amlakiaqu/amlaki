@@ -2,7 +2,7 @@
 
 @section('stylesheets')
   @parent
-  <link rel="stylesheet" href="{{ asset('css/index.css')  }}">
+  <link rel="stylesheet" href="{{ mix('css/index.css')  }}">
 @endsection
 
 @section('content')

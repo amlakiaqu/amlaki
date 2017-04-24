@@ -2,7 +2,6 @@
 
 namespace App\Notifications;
 
-use Log;
 use Illuminate\Notifications\Notification;
 use Illuminate\Notifications\Messages\MailMessage;
 
@@ -45,7 +44,6 @@ class ResetPasswordNotification extends Notification
      */
     public function toMail($notifiable)
     {
-        Log::info("Sending rest password email");
         $url = route('password.reset', $this->token);
         return (new MailMessage)
             ->subject('Reset Password')

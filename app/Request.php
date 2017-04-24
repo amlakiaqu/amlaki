@@ -7,13 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 class Request extends Model
 {
     /**
-     * The table associated with the model.
-     *
-     * @var string
-     */
-    protected $table = "request";
-
-    /**
      * Table Columns:
      *  - id
      *  - user_id
@@ -22,7 +15,24 @@ class Request extends Model
      *  - updated_at
      */
 
-    # Relationships
+    /*
+    |--------------------------------------------------------------------------
+    | GLOBAL VARIABLES
+    |--------------------------------------------------------------------------
+    */
+
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
+    protected $table = "request";
+
+    /*
+    |--------------------------------------------------------------------------
+    | RELATIONS
+    |--------------------------------------------------------------------------
+    */
 
     /**
      * Get the request owner .

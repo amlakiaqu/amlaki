@@ -10,6 +10,7 @@
     <!-- App Styles -->
     <link rel="stylesheet" href="{{ mix('css/app.css') }}">
     <link rel="stylesheet" href="{{ asset('css/smoke.min.css') }}">
+    <link rel="stylesheet" href="//cdn.datatables.net/1.10.15/css/jquery.dataTables.min.css">
 
     @if ( config('app.locale') == "ar")
     <!-- Bootstrap RTL custom css library  -->
@@ -35,13 +36,15 @@
               "posts" => [
                 "list" => route('posts.index'),
                 "get" => urldecode(route('posts.show', ["post" => "<% print(postId) %>"])),
-                "store" => route('posts.store')
+                "store" => route('posts.store'),
+                'update' => urldecode(route('posts.update', ["post" => "<% print(postId) %>"]))
               ],
               "categories" => [
                 "list" => route('categories.index')
               ],
               "users" => [
-                "get" => urldecode(route('users.show', ["user" => "<% print(userId) %>"]))
+                "get" => urldecode(route('users.show', ["user" => "<% print(userId) %>"])),
+                "getPosts" => urldecode(route('users.posts', ["user" => "<% print(userId) %>"]))
               ]
             ],
             "strings" => [
@@ -57,7 +60,11 @@
                     "default_item_text" => __('Select Post Category')
                 ],
                 "create_post_modal" => [
-                    "submit_form_button_text" => __("Add Post")
+                    "submit_form_button_text" => __("Add Post"),
+                    "form" => [
+                        "title_field_title" => __("Post Title"),
+                        "title_field_hint" => __("Test Post")
+                    ]
                 ],
                 "post_info_modal" => [
                     "advertiser_name_title" => __('Advertiser'),
@@ -73,6 +80,25 @@
                     "user_name_title" => __("User Name"),
                     "mobile_number_title" => __("Mobile Number"),
                     "address_title" => __("Address")
+                ],
+                "user_posts_modal" => [
+                    "modal" => [
+                        "title" => __("Posts")
+                    ],
+                    "table_columns_titles" => [
+                        "title" => __('Post Title'),
+                        "category" => __('Category'),
+                        "created_at" => __('Created At'),
+                        "last_update_date" => __('Last Update')
+                    ]
+                ]
+            ],
+            "assets" => [
+                "dataTables" => [
+                    "lang" => [
+                        "default" => config('app.locale') == "ar" ? asset('js/lang/dataTables/ar.json'): null,
+                        "ar"=> asset('js/lang/dataTables/ar.json')
+                    ]
                 ]
             ]
         ]) !!};
@@ -123,7 +149,7 @@
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-pushpin bt-icon-lg"></span> <span class="caret"></span></a>
                                 <ul class="dropdown-menu">
                                     <li><a href="javascript:void(0);" id="btn-create-post"><i class="fa fa-plus" aria-hidden="true"></i> {{ __("Add New Post")  }} </a></li>
-                                    <li><a href="javascript:void(0);"><i class="fa fa-list" aria-hidden="true"></i> {{ __("View My Posts")  }}</a></li>
+                                    <li><a href="javascript:void(0);" class="btn-show-user-posts" data-user-id="{{ Auth::user()->id }}"><i class="fa fa-list" aria-hidden="true"></i> {{ __("View My Posts")  }}</a></li>
                                 </ul>
                             </li>
 
@@ -185,6 +211,10 @@
     <script src="https://use.fontawesome.com/a8e79672ec.js"></script>
 
     <script src="{{ mix('js/app.js') }}"></script>
+
+    <script src="https://use.fontawesome.com/a8e79672ec.js"></script>
+    <script src="//cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
+
     <script src="{{ asset('js/validator.min.js') }}"></script>
     <script src="{{ asset('js/bootstrap-notify.min.js') }}"></script>
     <script src="{{ asset('js/bootbox.min.js') }}"></script>
@@ -194,14 +224,13 @@
     <script src="{{ asset('js/jquery_validation/additional-methods.min.js')  }}"></script>
     <script src="{{ asset('js/moment-with-locales.js')  }}"></script>
 
+    <script src="{{ mix('js/login.js') }}"></script>
+    <script src="{{ mix('js/resources.js')  }}"></script>
 
     @if (config('app.locale', 'en') == "ar")
         <script src="{{ asset('js/smoke/lang/ar.min.js')  }}"></script>
         <script src="{{ asset('js/jquery_validation/localization/messages_ar.min.js')  }}"></script>
     @endif
-
-    <script src="{{ mix('js/login.js') }}"></script>
-    <script src=" {{ mix('js/resources.js')  }} "></script>
 
     @yield('scripts')
 

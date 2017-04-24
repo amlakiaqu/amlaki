@@ -20,6 +20,9 @@ $(document).ready(function () {
         }
         var result = compiledTemplate(data);
         if (distSelector) {
+            if (distSelector.indexOf("#") < 0) {
+                distSelector = "#" + distSelector;
+            }
             if (append) {
                 $(distSelector).append(result);
             } else {

@@ -1,5 +1,17 @@
 $(document).ready(function () {
 
+    $(document).on('hidden.bs.modal', '.modal', function(e){
+        if ($(this).hasClass('auto-destroy') || $(this).hasClass('bootbox')) {
+            $(this).off();
+            $(this).remove();
+            $('body').attr("style", "");
+        }
+
+        if($('.modal').css('display') === 'block'){
+            $('body').addClass('modal-open');
+        }
+    });
+
     $('#btn-show-login-modal').on('click', function (event) {
         event.preventDefault();
         createLoginModal(defaultSetFormHandler);
@@ -70,9 +82,7 @@ $(document).ready(function () {
                 "success": function (response) {
                     createPostsGrid(postsContainerId, response);
                 },
-                "error": function (response) {
-                    console.log(response);
-                },
+                "error": function(jqXHR){console.log(jqXHR);},
                 "complete": function (jqXHR, textStatus) {
                     btn.html('<i class="fa fa-search" aria-hidden="true"></i>');
                 }
@@ -81,8 +91,6 @@ $(document).ready(function () {
     });
 
     $(document).on('keyup', '#input-search-posts', function(e){
-        console.log(e.which);
-
         if(e.which === 13){
             $('#btn-search-posts').trigger('click');
         }else{
@@ -94,9 +102,7 @@ $(document).ready(function () {
                     "success": function (response) {
                         createPostsGrid(Constants.POSTS_CONTAINER_ID, response);
                     },
-                    "error": function (response) {
-                        console.log(response);
-                    }
+                    "error": function(jqXHR){console.log(jqXHR);}
                 });
             }
         }
@@ -109,6 +115,11 @@ $(document).ready(function () {
         if(typeof(postId) === "number" && !isNaN(postId) ){
             createPostModal(url, postId);
         }
+    });
+
+    $(document).on('click', ".btn-table-view-post", function(e){
+        e.preventDefault();
+        $.this = this;
     });
 
     $(document).on('click', '.btn-show-post-user', function(e){
@@ -146,9 +157,7 @@ $(document).ready(function () {
                         var renderedHtml =  _.renderTemplate(templateId, data, distSelector, append, importJQuery);
                         dialog.find('.bootbox-body').html(renderedHtml);
                     },
-                    "error": function (response) {
-                        console.log(response);
-                    }
+                    "error": function(jqXHR){console.log(jqXHR);}
                 });
             });
         }
@@ -166,11 +175,91 @@ $(document).ready(function () {
                 var postsContainerId = Constants.POSTS_CONTAINER_ID;
                 createPostsGrid(postsContainerId, response);
             },
-            "error": function (response) {
-                console.log(response);
-            },
+            "error": function(jqXHR){console.log(jqXHR);},
             "complete": function (jqXHR, textStatus) {}
         });
     });
 
+    $(document).on('click', ".btn-show-user-posts", function(e){
+        e.preventDefault();
+        var userId = $(this).data('user-id');
+        var url = getUserPostsUrl(userId);
+        $.ajax({
+            "url": url,
+            "method": "GET",
+            "success": function(response){
+                var userInfo = response;
+                var containerId = Constants.MODALS_CONTAINER_ID;
+                var modalTemplateId = Constants.MODAL_TEMPLATE_ID;
+                var modalId = Constants.USER_POSTS_MODAL_ID;
+                var data = {
+                    "modal": {
+                        "id": modalId,
+                        "class": "auto-destroy",
+                        'title': Laravel.strings.user_posts_modal.modal.title + ' ' + userInfo.name,
+                        "body": '<table id="user-posts-data-table" class="table table-striped table-bordered" cellspacing="0" width="100%"></table>',
+                        "footer": ''
+                    }
+                };
+                _.renderTemplate(modalTemplateId, data, containerId, true);
+                var dataSet = [];
+                $.each(userInfo.posts, function(index, post){
+                    dataSet.push([post.id, post.title, post.category.name, post.created, post.updated]);
+                });
+
+                $('#user-posts-data-table').DataTable( {
+                    data: dataSet,
+                    "bFilter": true,
+                    "bLengthChange": false,
+                    "pageLength": 15,
+                    columns: [
+                        {
+                            "title": "id"
+                        },
+                        { title: Laravel.strings.user_posts_modal.table_columns_titles.title },
+                        { title: Laravel.strings.user_posts_modal.table_columns_titles.category },
+                        { title: Laravel.strings.user_posts_modal.table_columns_titles.created_at },
+                        { title: Laravel.strings.user_posts_modal.table_columns_titles.last_update_date },
+                        {
+                            data: null,
+                            className: "center",
+                            defaultContent: ''
+                        }
+                    ],
+                    columnDefs: [
+                        {
+                            targets: 0,
+                            visible: false
+                        },
+                        {
+                            targets: -1,
+                            render: function(data, type, row){
+                                return '<a href="javascript:void(0);" class="btn-view-post" data-post-id="' + data[0] + '"><i class="fa fa-pencil" aria-hidden="true"></i></a>'
+                            }
+                        }
+                    ],
+                    language: {
+                        "url": Laravel.locale === "ar" ? null: Laravel.assets.dataTables.lang.default,
+                        "sProcessing":   "جارٍ التحميل...",
+                        "sLengthMenu":   "أظهر _MENU_ مدخلات",
+                        "sZeroRecords":  "لا يوجد اعلانات",
+                        "sInfo":         "إظهار _START_ إلى _END_ من أصل _TOTAL_ مدخل",
+                        "sInfoEmpty":    "لا يوجد اعلانات",
+                        "sInfoFiltered": "(منتقاة من مجموع _MAX_ مُدخل)",
+                        "sInfoPostFix":  "",
+                        "sSearch":       "ابحث:",
+                        "sUrl":          "",
+                        "oPaginate": {
+                            "sFirst":    "الأول",
+                            "sPrevious": "السابق",
+                            "sNext":     "التالي",
+                            "sLast":     "الأخير"
+                        }
+                    }
+                } );
+                $("#" + modalId).modal('show');
+            },
+            "error": function(jqXHR){console.log(jqXHR);}
+        });
+    });
 });

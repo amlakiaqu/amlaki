@@ -7,14 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 class Post extends Model
 {
     /**
-     * The table associated with the model.
-     *
-     * @var string
-     */
-    protected $table = "post";
-    protected $name = "post";
-
-    /**
      * Table Columns:
      *  - id
      *  - title
@@ -26,7 +18,37 @@ class Post extends Model
      *  - updated_at
      */
 
-    # Relationships
+    /*
+    |--------------------------------------------------------------------------
+    | GLOBAL VARIABLES
+    |--------------------------------------------------------------------------
+    */
+
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
+    protected $table = "post";
+    protected $primaryKey = 'id'; // Optional or for custom primary key column
+    protected $guarded = ["id"];
+    protected $fillable = ['title'];
+    protected $dates = ["created_at", "updated_at"];
+
+    public $timestamps = true;
+
+    /**
+     * The attributes that should be casted to native types.
+     *
+     * @var array
+     */
+    protected $casts = ['created_at' => 'date',  'updated_at' => 'date'];
+
+    /*
+    |--------------------------------------------------------------------------
+    | RELATIONS
+    |--------------------------------------------------------------------------
+    */
 
     /**
      * Get the post owner

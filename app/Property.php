@@ -6,6 +6,21 @@ use Illuminate\Database\Eloquent\Model;
 
 class Property extends Model
 {
+    /**
+     *
+     * Table Columns:
+     *  - id
+     *  - title
+     *  - code
+     *  - value_type
+     *  - extra_settings
+     */
+
+    /*
+    |--------------------------------------------------------------------------
+    | GLOBAL VARIABLES
+    |--------------------------------------------------------------------------
+    */
 
     /**
      * The table associated with the model.
@@ -21,17 +36,11 @@ class Property extends Model
      */
     public $timestamps = false;
 
-    /**
-     *
-     * Table Columns:
-     *  - id
-     *  - title
-     *  - code
-     *  - value_type
-     *  - extra_settings
-     */
-
-    # Relationships
+    /*
+    |--------------------------------------------------------------------------
+    | RELATIONS
+    |--------------------------------------------------------------------------
+    */
 
     /**
      * Get the Property categories

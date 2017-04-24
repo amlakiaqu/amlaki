@@ -1,3 +1,20 @@
+window.hideModalsAndRefreshPosts = function(){
+    $(".modal").each(function(index, element){
+        $(element).modal("hide");
+    });
+    var postsContainerId = Constants.POSTS_CONTAINER_ID;
+    $.ajax({
+        "url": Laravel.apis.posts.list,
+        "method": "GET",
+        "success": function (response) {
+            createPostsGrid(postsContainerId, response);
+        },
+        "error": function (response) {
+            console.log(response);
+        }
+    });
+};
+
 window.createLoginModal = function (setFormHandler) {
     var modalId = Constants.LOGIN_MODAL_ID;
     var templateId = Constants.LOGIN_MODAL_TEMPLATE_ID;
@@ -35,7 +52,6 @@ window.createPostModal = function(url, postId){
                         className: "btn-danger",
                         callback: function (e) {
                             e.preventDefault();
-                            console.log('deleting post', postId);
                             bootbox.confirm({
                                 message: Laravel.strings.post_info_modal.delete_post_confirm_message,
                                 buttons: {
@@ -58,8 +74,10 @@ window.createPostModal = function(url, postId){
                                                 var message = response.message;
                                                 var type = "success";
                                                 var allowDismiss = true;
-                                                var delay = 3000;
-                                                generateNotification(message, type, allowDismiss, delay)
+                                                var delay = 2500;
+                                                generateNotification(message, type, allowDismiss, delay);
+                                                hideModalsAndRefreshPosts();
+
                                             },
                                             "error": function (response) {
                                                 console.log(response);
@@ -68,7 +86,7 @@ window.createPostModal = function(url, postId){
                                                     var message = responseData.message;
                                                     var type = "danger";
                                                     var allowDismiss = true;
-                                                    var delay = 3000;
+                                                    var delay = 0;
                                                     generateNotification(message, type, allowDismiss, delay);
                                                 }
                                             },
@@ -88,6 +106,7 @@ window.createPostModal = function(url, postId){
                         callback: function (e) {
                             e.preventDefault();
                             console.log('editing post', postId);
+
                             return false;
                         }
                     }
@@ -183,7 +202,7 @@ window.createPostCreateModal = function () {
             "class": "auto-destroy",
             "backdrop": "static",
             "keyboard": "false",
-            "body": "soso",
+            "body": "",
             "formId": Constants.CREATE_POST_FORM_ID
         }
     };
@@ -206,7 +225,7 @@ window.createPostCreateModal = function () {
                 });
             });
 
-            var dialog = bootbox.prompt({
+            bootbox.prompt({
                 title: Laravel.strings.post_category_type_modal.modal_title,
                 inputType: 'select',
                 inputOptions: categoriesOptions,
@@ -241,20 +260,6 @@ window.createPostCreateModal = function () {
                     }
                 }
             });
-            if(dialog){
-                dialog.on("hidden.bs.modal", function(e){
-                    // ensure we don't accidentally intercept hidden events triggered
-                    // by children of the current dialog. We shouldn't anymore now BS
-                    // namespaces its events; but still worth doing
-                    if (e.target === this) {
-                        dialog.remove();
-                    }
-
-                    if($('.modal.in').css('display') == 'block'){
-                        $('body').addClass('modal-open');
-                    }
-                });
-            }
         }
     });
     $(modalId).modal('show');
@@ -327,6 +332,17 @@ window.getUserUrl = function(userId, urlTemplate) {
     return url;
 };
 
+window.getUserPostsUrl = function(userId, urlTemplate) {
+    var url = undefined;
+    userId = parseInt(userId);
+    if(!isNaN(userId)){
+        urlTemplate = urlTemplate || Laravel.apis.users.getPosts;
+        var compiled = _.template(urlTemplate);
+        url = compiled({"userId": userId});
+    }
+    return url;
+};
+
 window.getCategories = function(callback, params) {
     var categories = Storages.localStorage.get('categories');
     if(!categories){
@@ -373,63 +389,11 @@ window.getHtmlInputTypeByPropertyType = function(propertyType){
         case "FLOAT":
             htmlInputType = "text";
             break;
+        case "DATE":
+            htmlInputType = "text";
+            break;
     }
     return htmlInputType;
-};
-
-window.generateForm = function(formSchema){
-    formSchema = {
-        "form": {
-            "id": Constants.CREATE_POST_FORM_ID,
-            "action": Laravel.apis.posts.store,
-            "method": "POST",
-            "class": "skip-validation",
-            "data": {
-                "category-id": "1" // change this
-            },
-            "submitHandler": null,
-            "extraAttributes": "",
-            /*
-                if form has a file input,
-                then the form enctype="multipart/form-data"
-                and has-file class will be added to form
-                and data-has-file attribute will be added with value 'true' (data-has-file="true")
-            */
-            "inputs": [{
-                "id": "form-1-input-1",
-                "name": "form-1-input-1",
-                "type": "text",
-                "typeCode": "STRING", // if type not one of ["STRING", "NUMBER", "COLOR", "CHECKBOX"] the "type" will be ignored
-                "value": "",
-                "class": "",
-                "placeholder": "this is input 1",
-                "required": true,
-                "title": "Please fill me!",
-                "inputFormGroupClass": "",
-                "inputGroupClass": "",
-                "inputPrefix": '<i class="fa fa-plus" aria-hidden="true"></i>',
-                "inputSuffix": "",
-                "extraAttributes": "",
-                "label": {
-                    "class": "",
-                    "text": "Input 1 Label"
-                },
-                // Params will be used with SELECT/MULTI_SELECT type
-                "options": [{"id": "option1", "text": "Option 1", "class": "active"}, {"id": "option2", "text": "Option 2", "class": ""}],
-                // if select2Options is null/undefined the select tag will not initialized with select2
-                "select2Options": {
-                    "minimumResultsForSearch": Infinity,
-                    "dir": "rtl",
-                    "language": "ar"
-                },
-                // Params will be used with DATE type
-                "datePicketOptions": {
-                    "minDate": new Date(),
-                    "maxDate": new Date(2018, 1, 1, 0,0,0)
-                }
-            }]
-        }
-    };
 };
 
 window.generateCreatePostForm = function(containerSelector, category, formProperties) {
@@ -437,7 +401,23 @@ window.generateCreatePostForm = function(containerSelector, category, formProper
     if(!container || container.length === 0){return;}
     var formId = Constants.CREATE_POST_FORM_ID;
     var renderedProperties = [];
-    $.each(category.properties, function(index, propertyObject){
+    var properties = [];
+    properties.push({
+        "code": "TITLE",
+        "value_type": "STRING",
+        "title": Laravel.strings.create_post_modal.form.title_field_title,
+        "required": 1,
+        "id": 0,
+        "extra_settings": {
+            "hint": Laravel.strings.create_post_modal.form.title_field_hint,
+            "data": {
+                "post-model-property": "true"
+            }
+        }
+    });
+    properties = properties.concat(category.properties);
+    $.properties = properties;
+    $.each(properties, function(index, propertyObject){
         var valueType = propertyObject.value_type;
         var inputType = getHtmlInputTypeByPropertyType(valueType);
         var inputId = formId + "-" + propertyObject.code;
@@ -474,6 +454,7 @@ window.generateCreatePostForm = function(containerSelector, category, formProper
                 extraAttributes += ' pattern="' + Constants.REGEX_STRING.FLOAT + '" ';
             }
             var classes = "form-control ";
+            var data = "";
             var prefixAddon = "";
             var suffixAddon = "";
 
@@ -490,9 +471,18 @@ window.generateCreatePostForm = function(containerSelector, category, formProper
                 if(extraSettings.classes){
                     classes += extraSettings.classes;
                 }
+                if(extraSettings.data){
+                    $.each(extraSettings.data, function(key, value){
+                        data += ' data-' + key + '="' + value + '" ';
+                    });
+                }
                 if(extraSettings.currency){
                     prefixAddon = getCurrencySymbolHtmlCode(extraSettings.currency);
                 }
+            }
+
+            if(data && data.length > 0){
+                extraAttributes += " " + data + " ";
             }
 
             inputTemplateData = {
@@ -531,7 +521,7 @@ window.generateCreatePostForm = function(containerSelector, category, formProper
          * Create Submit Button
          */
         var submitButtonAttributes = '';
-        submitButtonAttributes += 'class="btn-success btn-block" type="submit"';
+        submitButtonAttributes += 'class="btn btn-success btn-block" type="submit"';
         var buttonTemplateId = Constants.BUTTON_TEMPLATE_ID;
         var buttonTemplateData = {
             "attributes": submitButtonAttributes,
