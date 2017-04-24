@@ -92,11 +92,31 @@ class UserController extends Controller
      * Return user posts
      * @param Request $request
      * @param User $user
-     * @return User
+     * @return \Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model
      */
-    public function getPosts(Request $request, $user){
+    public function getPosts(Request $request, User $user){
 
 //        Log::info(['r' => $request, 'u' => $user]);
-        return $user::with("posts")->get();
+        $user =  User::select(["id", "name"])->with(["posts" => function($query){
+            $query->with(["category" => function($categoryQuery){
+                $categoryQuery->select(["id", "name"]);
+            }])->select(["id", "title", "user_id", "category_id", "created_at", "updated_at"]);
+
+        }])->findOrFail($user->id);
+
+        foreach($user->posts as $post){
+//            dd([$post->created_at, $post->created_at->format('d/m/Y'), typeOf($post->created_at)]);
+            if($post->created_at){
+                $post->created = $post->created_at->format('d/m/Y');
+            }
+            if($post->updated_at){
+                $post->updated = $post->updated_at->format('d/m/Y');
+            }
+            unset($post->created_at);
+            unset($post->updated_at);
+            $post->category->name = __($post->category->name);
+        }
+
+        return $user;
     }
 }

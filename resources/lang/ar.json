@@ -55,5 +55,11 @@
 	"You are not allowed to delete this post": "ليس لديك الصلاحية لحف الأعلان",
 	"Post deleted successfully": "تم حذف الأعلان بنجاح",
 	"Select the category": "اختار الفئة",
-	"No Posts": "لا يوجد اعلانات"
+	"No Posts": "لا يوجد اعلانات",
+	"Posts": "اعلانات",
+	"Post Title": "عنوان الاعلان",
+	"Last Update": "اخر تحديث",
+	"Created At": "نشر في",
+	"Test Post":  "اعلان تجريبي",
+	"Post Created Successfully": "تم إنشاء الأعلان بنجاح"
 }

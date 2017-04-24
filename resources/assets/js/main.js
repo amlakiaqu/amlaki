@@ -33,14 +33,19 @@ $( document ).ajaxComplete(function() {
 $(document).ready(function(){
     // initialize all tooltips
     $('[data-toggle="tooltip"]').tooltip();
+
     bootbox.setDefaults({
         local: Laravel.locale
     });
 
-    $(document).on('hidden.bs.modal', '.auto-destroy', function () {
-        $(this).off();
-        $(this).remove();
-    });
+    // Set Default Settings of DataTables
+    $.extend( true, $.fn.dataTable.defaults, {
+        "searching": true,
+        "ordering": true,
+        "language": {
+            "url": Laravel.assets.dataTables.lang.default
+        }
+    } );
 });
 
 

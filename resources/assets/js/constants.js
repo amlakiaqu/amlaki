@@ -2,6 +2,8 @@ window.Constants = Object.freeze({
     "MODALS_CONTAINER_ID": "modals-container",
     "BUTTON_TEMPLATE_ID": "button-template",
     "TABLE_TEMPLATE_ID": "table-template",
+    "MODAL_TEMPLATE_ID": "bootstrap-modal-template",
+    "USER_POSTS_MODAL_ID": "user-posts-modal",
     "LOGIN_MODAL_TEMPLATE_ID": "login-modal-template",
     "LOGIN_MODAL_ID": "login-modal",
     "LOGIN_FORM_CODE": "LOGIN_FORM",
@@ -16,12 +18,13 @@ window.Constants = Object.freeze({
     "CREATE_POST_MODAL_ID": "create-post-modal",
     "CREATE_POST_FORM_ID": "create-post-form",
     "CREATE_POST_MODAL_TEMPLATE_ID": "create-post-modal-template",
+    "UPDATE_POST_FORM_ID": "update-post-form",
     "POSTS_CONTAINER_ID": 'posts-container',
     "DEFAULT_IMAGE_URL": "http://placehold.it/500x400",
     "FORM_TEMPLATE_ID": "form-template",
     "BASIC_INPUT_TEMPLATE_ID": "input-basic-template",
     "BASIC_INPUT_CONTAINER_TEMPLATE_ID": "input-basic-container-template",
-    "BASIC_INPUT_TYPES": ['STRING', 'NUMBER', 'FLOAT'],
+    "BASIC_INPUT_TYPES": ['STRING', 'NUMBER', 'FLOAT', 'DATE'],
     "REGEX": {
         "FLOAT": /^-?\d*(\.\d+)?$/g
     },

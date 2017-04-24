@@ -1,7 +1,7 @@
 <script type="text/template" charset="utf-8" id="post-card-template">
     <div class="col-md-3 col-sm-6 post">
     <span class="thumbnail">
-      <img class="img-view-post" src="<% print(post.image.url); %>" alt="<% print(post.image.alt); %>" data-post-id="<% print(post.id); %>">
+      <img class="img-view-post clickable" src="<% print(post.image.url); %>" alt="<% print(post.image.alt); %>" data-post-id="<% print(post.id); %>">
       <h4><% print(post.title); %></h4>
       <hr class="line">
       <h4> {{ __('Published By') }}: </h4> <a href="javascript:void(0)" class="btn-show-post-user"

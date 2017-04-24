@@ -12,6 +12,12 @@ class User extends Authenticatable
     use Notifiable;
     use SoftDeletes;
 
+    /*
+    |--------------------------------------------------------------------------
+    | GLOBAL VARIABLES
+    |--------------------------------------------------------------------------
+    */
+
     /**
      * The table associated with the model.
      *
@@ -43,6 +49,12 @@ class User extends Authenticatable
      * @var array
      */
     protected $dates = ['deleted_at'];
+
+    /*
+    |--------------------------------------------------------------------------
+    | RELATIONS
+    |--------------------------------------------------------------------------
+    */
 
     /**
      * Get the user posts

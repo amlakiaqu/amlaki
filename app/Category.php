@@ -7,6 +7,19 @@ use Illuminate\Database\Eloquent\Model;
 class Category extends Model
 {
     /**
+     * Table Columns:
+     *  - id
+     *  - name
+     *  - code
+     */
+
+    /*
+    |--------------------------------------------------------------------------
+    | GLOBAL VARIABLES
+    |--------------------------------------------------------------------------
+    */
+
+    /**
      * The table associated with the model.
      *
      * @var string
@@ -20,14 +33,11 @@ class Category extends Model
      */
     public $timestamps = false;
 
-    /**
-     * Table Columns:
-     *  - id
-     *  - name
-     *  - code
-     */
-
-    # Relationships
+    /*
+    |--------------------------------------------------------------------------
+    | RELATIONS
+    |--------------------------------------------------------------------------
+    */
 
     /**
      * Get the Category properties
