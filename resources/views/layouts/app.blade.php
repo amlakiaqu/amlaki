@@ -37,7 +37,7 @@
                 "list" => route('posts.index'),
                 "get" => urldecode(route('posts.show', ["post" => "<% print(postId) %>"])),
                 "store" => route('posts.store'),
-                'update' => urldecode(route('posts.update', ["post" => "<% print(postId) %>"]))
+                'update' => urldecode(route('posts.update', ["post" => "<% print(id) %>"]))
               ],
               "categories" => [
                 "list" => route('categories.index')
@@ -65,6 +65,10 @@
                         "title_field_title" => __("Post Title"),
                         "title_field_hint" => __("Test Post")
                     ]
+                ],
+                "edit_post_modal" => [
+                    "modal_title" => __("Edit Post"),
+                    "submit_form_button_text" => __("Edit Post")
                 ],
                 "post_info_modal" => [
                     "advertiser_name_title" => __('Advertiser'),

@@ -16,7 +16,9 @@ window.Constants = Object.freeze({
     "POST_INFO_MODAL_BODY_TEMPLATE_ID": "post-info-modal-body-template",
     "POST_CARD_TEMPLATE_ID": "post-card-template",
     "CREATE_POST_MODAL_ID": "create-post-modal",
+    "EDIT_POST_MODAL_ID": "edit-post-modal",
     "CREATE_POST_FORM_ID": "create-post-form",
+    "EDIT_POST_FORM_ID": "edit-post-form",
     "CREATE_POST_MODAL_TEMPLATE_ID": "create-post-modal-template",
     "UPDATE_POST_FORM_ID": "update-post-form",
     "POSTS_CONTAINER_ID": 'posts-container',
@@ -24,7 +26,7 @@ window.Constants = Object.freeze({
     "FORM_TEMPLATE_ID": "form-template",
     "BASIC_INPUT_TEMPLATE_ID": "input-basic-template",
     "BASIC_INPUT_CONTAINER_TEMPLATE_ID": "input-basic-container-template",
-    "BASIC_INPUT_TYPES": ['STRING', 'NUMBER', 'FLOAT', 'DATE'],
+    "BASIC_INPUT_TYPES": ['STRING', 'NUMBER', 'FLOAT', 'DATE', "HIDDEN"],
     "REGEX": {
         "FLOAT": /^-?\d*(\.\d+)?$/g
     },

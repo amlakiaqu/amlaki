@@ -100,7 +100,7 @@ class UserController extends Controller
         $user =  User::select(["id", "name"])->with(["posts" => function($query){
             $query->with(["category" => function($categoryQuery){
                 $categoryQuery->select(["id", "name"]);
-            }])->select(["id", "title", "user_id", "category_id", "created_at", "updated_at"]);
+            }])->select(["id", "title", "user_id", "category_id", "created_at"]);
 
         }])->findOrFail($user->id);
 
@@ -109,11 +109,7 @@ class UserController extends Controller
             if($post->created_at){
                 $post->created = $post->created_at->format('d/m/Y');
             }
-            if($post->updated_at){
-                $post->updated = $post->updated_at->format('d/m/Y');
-            }
             unset($post->created_at);
-            unset($post->updated_at);
             $post->category->name = __($post->category->name);
         }
 

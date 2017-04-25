@@ -105,8 +105,87 @@ window.createPostModal = function(url, postId){
                         className: "btn-warning",
                         callback: function (e) {
                             e.preventDefault();
-                            console.log('editing post', postId);
+                            var postId = response.id;
+                            var category = response.category;
+                            var submitButtonAttributes = '';
+                            submitButtonAttributes += 'class="btn btn-warning btn-block" type="submit"';
+                            var buttonTemplateData = {
+                                "attributes": submitButtonAttributes,
+                                "text": Laravel.strings.edit_post_modal.submit_form_button_text,
+                                'icon': 'fa fa-edit'
+                            };
+                            var formAttributes = "";
+                            formAttributes += 'data-category-id="' + category.id + '" data-post-id="' + postId+ '" ';
+                            var formProperties = {
+                                "id": Constants.EDIT_POST_FORM_ID,
+                                "url": renderUrl(postId, Laravel.apis.posts.update),
+                                "method": "PUT",
+                                "classes": "",
+                                "button_template_data": buttonTemplateData,
+                                "extra_attrs": formAttributes
+                            };
 
+                            var schema = [];
+                            schema.push({
+                                "code": "id",
+                                "value_type": "HIDDEN",
+                                "title": "",
+                                "required": 1,
+                                "id": 0,
+                                "extra_settings": {
+                                    "default": response.id,
+                                    "hint": ""
+                                }
+                            });
+                            schema.push({
+                                "code": "TITLE",
+                                "value_type": "STRING",
+                                "title": Laravel.strings.create_post_modal.form.title_field_title,
+                                "required": 1,
+                                "id": 0,
+                                "extra_settings": {
+                                    "default": response.title,
+                                    "hint": Laravel.strings.create_post_modal.form.title_field_hint,
+                                    "data": {
+                                        "post-model-property": "true"
+                                    }
+                                }
+                            });
+                            if(category && category.properties){
+                                $.each(category.properties, function(index, property){
+                                    var postProperty = _.filter(response.properties || [], function(o) { return o.code === property.code; });
+                                    var value = undefined;
+                                    if(postProperty && postProperty.length === 1){
+                                        postProperty = postProperty[0];
+                                        value = postProperty.value;
+                                    }
+                                    if(value){
+                                        if(!property.extra_settings){property.extra_settings = {};}
+                                        property.extra_settings.default = value;
+                                    }
+                                    schema.push(property);
+                                });
+                            }
+                            var renderedForm = generateForm(schema, formProperties);
+                            var modalId = Constants.EDIT_POST_MODAL_ID;
+                            var templateId = Constants.MODAL_TEMPLATE_ID;
+                            var data = {
+                                "modal": {
+                                    "id": modalId,
+                                    "title": Laravel.strings.edit_post_modal.modal_title + ' "' + response.title + '" ',
+                                    "class": "auto-destroy",
+                                    "backdrop": "static",
+                                    "keyboard": "false",
+                                    "body": renderedForm,
+                                    "no_footer": true,
+                                    "large": false
+                                }
+                            };
+                            var distSelector = "#" + Constants.MODALS_CONTAINER_ID;
+                            var append = true;
+                            _.renderTemplate(templateId, data, distSelector, append);
+                            $(".modal").modal("hide");
+                            $("#" + modalId).modal("show");
                             return false;
                         }
                     }
@@ -140,7 +219,9 @@ window.createPostModal = function(url, postId){
             var append = false;
             var importJQuery = true;
             options["message"] = _.renderTemplate(templateId, {"data": data}, distSelector, append, importJQuery);
+            options["className"] = "post-info-modal";
             var dialog = bootbox.dialog(options);
+            dialog.attr("data-post-id", response.id);
         },
         "error": function (response) {
             console.log(response);
@@ -310,6 +391,15 @@ window.generateNotification = function (message, type, allowDismiss, delay) {
     }
 };
 
+window.renderUrl = function(id, urlTemplate){
+    var url = undefined;
+    if(urlTemplate){
+        var compiled = _.template(urlTemplate);
+        url = compiled({"id": id});
+    }
+    return url;
+};
+
 window.getPostUrl = function(postId, urlTemplate) {
     var url = undefined;
     postId = parseInt(postId);
@@ -391,6 +481,9 @@ window.getHtmlInputTypeByPropertyType = function(propertyType){
             break;
         case "DATE":
             htmlInputType = "text";
+            break;
+        case "HIDDEN":
+            htmlInputType = "hidden";
             break;
     }
     return htmlInputType;
@@ -554,5 +647,150 @@ window.generateCreatePostForm = function(containerSelector, category, formProper
         };
         var renderedForm = _.renderTemplate(formTemplateId, formData);
         container.html(renderedForm);
+    }
+};
+
+window.generateForm = function(schema, formProperties) {
+    var formId = formProperties.id;
+    var renderedProperties = [];
+    $.each(schema, function(index, propertyObject){
+        var valueType = propertyObject.value_type;
+        var inputType = getHtmlInputTypeByPropertyType(valueType);
+        var inputId = formId + "-" + propertyObject.code;
+        var inputTemplateId = undefined;
+        var containerTemplateId = undefined;
+        var inputTemplateData = undefined;
+        var inputTemplateContainerData = undefined;
+        if(Constants.BASIC_INPUT_TYPES.indexOf(valueType) > -1){
+            inputTemplateId = Constants.BASIC_INPUT_TEMPLATE_ID;
+            containerTemplateId = Constants.BASIC_INPUT_CONTAINER_TEMPLATE_ID;
+            var extraSettings = propertyObject.extra_settings || undefined;
+            var requiredField = false;
+
+            /**
+             *
+             * properties.type
+             * properties.name
+             * properties.value
+             * properties.classes
+             * properties.extraAttributes
+             */
+            var extraAttributes = "";
+
+            extraAttributes += 'data-property-id="'+ propertyObject.id + '"';
+
+            if(inputId){
+                extraAttributes += 'id="' + inputId + '" ';
+            }
+            if(propertyObject.required === 1){
+                requiredField = true;
+                extraAttributes += " required ";
+            }
+            if(valueType === "FLOAT"){
+                extraAttributes += ' pattern="' + Constants.REGEX_STRING.FLOAT + '" ';
+            }
+            var classes = "form-control ";
+            var data = "";
+            var prefixAddon = "";
+            var suffixAddon = "";
+
+            if(extraSettings){
+                if(extraSettings.hint){
+                    extraAttributes += ' placeholder="'+ extraSettings.hint + '" ';
+                }
+                if(extraSettings.min || typeof(extraSettings.min) === "number"){
+                    extraAttributes += ' min="' + extraSettings.min + '" ';
+                }
+                if(extraSettings.max || typeof(extraSettings.max) === "number"){
+                    extraAttributes += ' max="' + extraSettings.max + '" ';
+                }
+                if(extraSettings.classes){
+                    classes += extraSettings.classes;
+                }
+                if(extraSettings.data){
+                    $.each(extraSettings.data, function(key, value){
+                        data += ' data-' + key + '="' + value + '" ';
+                    });
+                }
+                if(extraSettings.currency){
+                    prefixAddon = getCurrencySymbolHtmlCode(extraSettings.currency);
+                }
+            }
+
+            if(data && data.length > 0){
+                extraAttributes += " " + data + " ";
+            }
+
+            inputTemplateData = {
+                "type": inputType,
+                "name": propertyObject.code,
+                "value": extraSettings !== undefined ? extraSettings.default || "": "",
+                "classes": classes,
+                "extraAttributes": extraAttributes,
+                "prefixAddon": prefixAddon,
+                "suffixAddon": suffixAddon
+            };
+
+            inputTemplateContainerData = {
+                "inputId": inputId || "",
+                "label": propertyObject.title || propertyObject.code || "",
+                "inputHtml": "",
+                "helpMessage": extraSettings !== undefined ? extraSettings.help || "": "",
+                "helpBlockClasses": "",
+                "formGroupClasses": requiredField ? "required": ""
+            }
+        }
+
+        if(inputTemplateId && containerTemplateId){
+            inputTemplateContainerData.inputHtml = _.renderTemplate(inputTemplateId, inputTemplateData);
+            if(valueType !== "HIDDEN"){
+                var renderedInputContainer = _.renderTemplate(containerTemplateId, inputTemplateContainerData);
+            }else{
+                renderedInputContainer = inputTemplateContainerData.inputHtml;
+            }
+            renderedProperties.push(renderedInputContainer);
+        }
+    });
+
+    /**
+     * formAttributes
+     * formFields
+     */
+    if(_.isArray(renderedProperties)&& _.size(renderedProperties) > 0){
+        /**
+         * Create Submit Button
+         */
+
+        var buttonTemplateId = Constants.BUTTON_TEMPLATE_ID;
+        var buttonTemplateData = formProperties.button_template_data;
+        if(buttonTemplateData && _.size(buttonTemplateData) > 0){
+            renderedProperties.push(_.renderTemplate(buttonTemplateId, buttonTemplateData));
+        }
+
+        var formTemplateId = Constants.FORM_TEMPLATE_ID;
+        var formAttributes = "";
+        formAttributes += ' id="' + formId + '" ';
+
+        if(formProperties){
+            if(formProperties.url){
+                formAttributes += ' action=" ' + formProperties.url + '"';
+            }
+            if(formProperties.method){
+                formAttributes += ' method=" ' + formProperties.method + '"';
+            }
+            if(formProperties.classes){
+                formAttributes += ' class=" ' + formProperties.classes + '"';
+            }
+        }
+        if(formProperties.extra_attrs){
+            formAttributes += formProperties.extra_attrs;
+        }
+
+        var formData = {
+            "formAttributes" : formAttributes,
+            "formFields": _.join(renderedProperties, ' ')
+        };
+
+        return _.renderTemplate(formTemplateId, formData);;
     }
 };

@@ -113,7 +113,7 @@ class PostController extends Controller
                 $query->select(['id', 'name']);
             },
             'category' => function($query){
-                $query->select(['id', 'name']);
+                $query->select(['id', 'name'])->with("properties");
             },
             'properties' => function($query){
                 $query->select(["title", "code"]);
@@ -133,6 +133,16 @@ class PostController extends Controller
             if (!empty($post->category->name)) {
                 $post->category->name = __($post->category->name);
             }
+            if(!empty($post->category->properties)){
+                foreach ($post->category->properties as $property){
+                    $property->title = __($property->title);
+                    $property->required = $property->pivot->required;
+                    if($property->extra_settings){
+                        $property->extra_settings = json_decode($property->extra_settings);
+                    }
+                    unset($property->pivot);
+                }
+            }
         }
         return $post;
     }
@@ -146,7 +156,19 @@ class PostController extends Controller
      */
     public function update(Request $request, Post $post)
     {
-        //
+        $requestData = $request->json();
+        foreach ($requestData as $propertyCode => $propertyValue) {
+            $property = $post->properties()->where("code", "=", $propertyCode)->first();
+            if($property){
+                $post->properties()->updateExistingPivot($property->id, ["value" => $propertyValue]);
+            }
+        }
+        $title = $requestData->get("TITLE");
+        if($title){
+            $post->title = $title;
+        }
+        $post->save();
+        return response()->json(["message" => __('Post updated successfully')]);
     }
 
     /**

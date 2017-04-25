@@ -204,7 +204,7 @@ $(document).ready(function () {
                 _.renderTemplate(modalTemplateId, data, containerId, true);
                 var dataSet = [];
                 $.each(userInfo.posts, function(index, post){
-                    dataSet.push([post.id, post.title, post.category.name, post.created, post.updated]);
+                    dataSet.push([post.id, post.title, post.category.name, post.created]);
                 });
 
                 $('#user-posts-data-table').DataTable( {
@@ -219,7 +219,6 @@ $(document).ready(function () {
                         { title: Laravel.strings.user_posts_modal.table_columns_titles.title },
                         { title: Laravel.strings.user_posts_modal.table_columns_titles.category },
                         { title: Laravel.strings.user_posts_modal.table_columns_titles.created_at },
-                        { title: Laravel.strings.user_posts_modal.table_columns_titles.last_update_date },
                         {
                             data: null,
                             className: "center",
