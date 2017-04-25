@@ -2,19 +2,17 @@
 
 namespace App\Events;
 
-use Illuminate\Broadcasting\Channel;
 use Illuminate\Bus\Queueable;
+use Illuminate\Broadcasting\Channel;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Broadcasting\PresenceChannel;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Contracts\Queue\ShouldQueue;
 
 class PostCreatedEvent implements ShouldBroadcast, ShouldQueue
 {
-    use Dispatchable, InteractsWithSockets, SerializesModels, Queueable;
+    use Dispatchable, InteractsWithSockets, Queueable, SerializesModels;
 
     /**
      * Only (!) Public members will be serialized to JSON and sent to Pusher
@@ -28,8 +26,6 @@ class PostCreatedEvent implements ShouldBroadcast, ShouldQueue
      */
     public function __construct($message)
     {
-        //
-        Log::info("PostCreatedEvent.__construct called");
         $this->message = $message;
     }
 
@@ -40,7 +36,20 @@ class PostCreatedEvent implements ShouldBroadcast, ShouldQueue
      */
     public function broadcastOn()
     {
-        Log::info("PostCreatedEvent.broadcastOn called");
         return new Channel('my-channel');
+    }
+
+    public function broadcastWith()
+    {
+        // TODO: write the logic to get the users ids to be notified
+        return $this->message;
+//        return [
+//            'user' => [
+//                'name' => 'Klark Cent',
+//                'age' => 30,
+//                'planet' => 'Crypton',
+//                'abilities' => 'Bashing'
+//            ]
+//        ];
     }
 }

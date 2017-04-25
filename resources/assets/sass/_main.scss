@@ -11,14 +11,20 @@ body {
     font-size: 24px;
 }
 
-.table.center td,
-.table.center th,
-.table td.center,
-.table th.center,
+table.center td,
+table.center th,
 p.center {
     text-align: center;
 }
 
 img.clickable {
     cursor: pointer;
+}
+
+table tbody tr td.center,
+table tbody tr th.center,
+table thead tr td.center,
+table thead tr th.center {
+    vertical-align: middle;
+    text-align: center;
 }

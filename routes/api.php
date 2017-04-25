@@ -19,6 +19,10 @@ Route::group(["prefix" => "v1"], function () {
         Route::get('/logout', 'Auth\LoginController@logout');
 
         // Resources
+        Route::get('users/{user}/requests', 'UserController@getRequests')->name('users.requests');
+
+        Route::resource('requests', 'RequestController', ['only' => ['show', 'store', 'update', 'destroy']]);
+
         // Posts Private Routes
         Route::resource('posts', 'PostController', ['only' => ['store', 'update', 'destroy']]);
     });

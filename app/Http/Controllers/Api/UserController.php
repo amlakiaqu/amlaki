@@ -96,7 +96,6 @@ class UserController extends Controller
      */
     public function getPosts(Request $request, User $user){
 
-//        Log::info(['r' => $request, 'u' => $user]);
         $user =  User::select(["id", "name"])->with(["posts" => function($query){
             $query->with(["category" => function($categoryQuery){
                 $categoryQuery->select(["id", "name"]);
@@ -105,12 +104,46 @@ class UserController extends Controller
         }])->findOrFail($user->id);
 
         foreach($user->posts as $post){
-//            dd([$post->created_at, $post->created_at->format('d/m/Y'), typeOf($post->created_at)]);
             if($post->created_at){
                 $post->created = $post->created_at->format('d/m/Y');
             }
             unset($post->created_at);
             $post->category->name = __($post->category->name);
+        }
+
+        return $user;
+    }
+
+    /**
+     * Return user requests
+     * @param Request $request
+     * @param User $user
+     * @return \Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model
+     */
+    public function getRequests(Request $request, User $user){
+        $user =  User::select(["id", "name"])->with(["requests" => function($query){
+            $query->with(["category" => function($categoryQuery){
+                $categoryQuery->select(["id", "name"]);
+            }, "properties"])->select(["id", "user_id", "category_id", "created_at"]);
+        }])->findOrFail($user->id);
+
+        foreach($user->requests as $request){
+            if($request->created_at){
+                $request->created = $request->created_at->format('d/m/Y');
+            }
+
+            $request->category->name = __($request->category->name);
+            foreach ($request->properties as $property){
+                $property->title = __($property->title);
+                $property->value = $property->pivot->value;
+                unset($property->pivot);
+                if($property->extra_settings){
+                    $property->extra_settings = json_decode($property->extra_settings);
+                }
+            }
+            unset($request->created_at);
+            unset($request->user_id);
+            unset($request->category_id);
         }
 
         return $user;

@@ -62,5 +62,11 @@
 	"Created At": "نشر في",
 	"Test Post":  "اعلان تجريبي",
 	"Post Created Successfully": "تم إنشاء الأعلان بنجاح",
-	"Post updated successfully": "تم تحديث الأعلان بنجاح"
+	"Post updated successfully": "تم تحديث الأعلان بنجاح",
+	"Requests of": "متابعات",
+	"Request Properties": "خضائص المتابعة",
+	"Any Post Type": "الجميع",
+	"Delete Request": "حذف المتابعة",
+	"Are you sure, you want to delete the request ?": "هل انت متأكد انك تريد حذف المتابعة ؟",
+	"Request deleted successfully": "تم حذف المتابعة بنجاح"
 }

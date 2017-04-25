@@ -5,7 +5,7 @@ $(document).ready(function(){
         createPostCreateModal();
     });
 
-    $(document).on('submit', "#" + Constants.CREATE_POST_FORM_ID + ", #" + Constants.UPDATE_POST_FORM_ID, function(e){
+    $(document).on('submit', "#" + Constants.CREATE_POST_FORM_ID, function(e){
         e.preventDefault();
         var form = $(this);
         var formUrl = form.attr("action");
@@ -36,7 +36,6 @@ $(document).ready(function(){
         var method = form.attr("method").trim();
         var data = form.serializeArray().asMap("name", "value");
 
-        // console.log("url", url, "method", method, "data", data);
         $.ajax({
             "url": url,
             "method": method,

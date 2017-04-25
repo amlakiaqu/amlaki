@@ -44,7 +44,12 @@
               ],
               "users" => [
                 "get" => urldecode(route('users.show', ["user" => "<% print(userId) %>"])),
-                "getPosts" => urldecode(route('users.posts', ["user" => "<% print(userId) %>"]))
+                "getPosts" => urldecode(route('users.posts', ["user" => "<% print(userId) %>"])),
+                "getRequests" => urldecode(route('users.requests', ["user" => "<% print(id) %>"])),
+              ],
+              "requests" => [
+                "get" => urldecode(route('requests.show', ["request" => "<% print(id) %>"])),
+                "delete" => urldecode(route('requests.destroy', ["request" => "<% print(id) %>"])),
               ]
             ],
             "strings" => [
@@ -95,6 +100,28 @@
                         "created_at" => __('Created At'),
                         "last_update_date" => __('Last Update')
                     ]
+                ],
+                "user_requests" => [
+                    "types" => [
+                        "ALL" => __("Any Post Type")
+                    ]
+                ],
+                "user_requests_modal" => [
+                    "modal" => [
+                        "title" => __("Requests of")
+                    ],
+                    "table_columns_titles" => [
+                        "category" => __('Category'),
+                        "properties" => __('Request Properties')
+                    ]
+                ],
+                "delete_request_confirm_modal" => [
+                    "title" => __('Delete Request'),
+                    "message" => __("Are you sure, you want to delete the request ?"),
+                    "btn" => [
+                        "confirm" => __("Delete"),
+                        "cancel" => __("Cancel")
+                    ]
                 ]
             ],
             "assets" => [
@@ -143,8 +170,8 @@
                             <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa fa-eye fa-2x" aria-hidden="true"></i> <span class="caret"></span></a>
                                 <ul class="dropdown-menu">
-                                    <li><a href="#"><i class="fa fa-plus" aria-hidden="true"></i> {{ __("Add New Request")  }} </a></li>
-                                    <li><a href="#"><i class="fa fa-list" aria-hidden="true"></i> {{ __("View My Requests")  }}</a></li>
+                                    <li><a href="javascript:void(0);" id="btn-add-request"><i class="fa fa-plus" aria-hidden="true"></i> {{ __("Add New Request")  }} </a></li>
+                                    <li><a href="javascript:void(0);" class="btn-show-user-requests" data-user-id="{{ Auth::user()->id }}"><i class="fa fa-list" aria-hidden="true"></i> {{ __("View My Requests")  }}</a></li>
                                 </ul>
                             </li>
 
