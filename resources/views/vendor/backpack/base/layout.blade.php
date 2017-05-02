@@ -5,6 +5,10 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
+    @if(Auth::user()->is_admin === false)
+        <script>window.location.replace("{{route('home')}}");</script>
+    @endif
+
     {{-- Encrypted CSRF token for Laravel, in order for Ajax requests to work --}}
     <meta name="csrf-token" content="{{ csrf_token() }}" />
 
@@ -38,6 +42,19 @@
     <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
     <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
+    <!-- Custom Style For This Layout Only -->
+    <style rel="stylesheet">
+        /* Hide Sidebar Toggle Button B */
+        .sidebar-toggle {display: none;}
+
+        /* Pull the Main Footer to the right */
+        .main-footer {
+            width: 100%;
+            text-align: right;
+            float: right;
+        }
+    </style>
+
 </head>
 <body class="hold-transition {{ config('backpack.base.skin') }} sidebar-mini">
     <!-- Site wrapper -->

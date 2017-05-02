@@ -1,8 +1,35 @@
+window.getUrlParameter = function getUrlParameter(sParam) {
+    var sPageURL = decodeURIComponent(window.location.search.substring(1)),
+        sURLVariables = sPageURL.split('&'),
+        sParameterName,
+        i;
+
+    for (i = 0; i < sURLVariables.length; i++) {
+        sParameterName = sURLVariables[i].split('=');
+
+        if (sParameterName[0] === sParam) {
+            return sParameterName[1] === undefined ? true : sParameterName[1];
+        }
+    }
+};
+
 Array.prototype.asMap = function (name, value) {
     return _.reduce(this, function(acc, item) {
         acc[item[name]] = item[value];
         return acc;
     }, {});
+};
+
+String.prototype.format = function (params) {
+    var source = this;
+    if(typeof(params) !== "object"){
+        params = [params];
+    }
+
+    $.each(params,function (key, value) {
+        source = source.replace(new RegExp("\\{" + key + "\\}", "g"), value);
+    });
+    return source;
 };
 
 $( document ).ajaxSend(function( event, request, settings ) {

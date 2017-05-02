@@ -13,12 +13,12 @@
               <div class="form-errors" ></div>
               <div class="form-group">
                 <label for="login-username"> {{ __("Username") }} </label>
-                <input type="text" class="form-control" id="login-username" name="username" placeholder="{{ __("Enter username or email address") }}" required data-maxlength="191">
+                <input type="text" class="form-control" id="login-username" name="username" placeholder="{{ __("Enter username or email address") }}" required>
                 <div class="help-block with-errors"></div>
               </div>
               <div class="form-group">
                 <label for="login-password">{{ __("Password") }}</label>
-                <input type="password" class="form-control" id="login-password" name="password" placeholder="{{ __("Password") }}" required data-minlength="6">
+                <input type="password" class="form-control" id="login-password" name="password" placeholder="{{ __("Password") }}" required>
                 <div class="help-block with-errors"></div>
               </div>
               <button type="submit" class="btn btn-primary btn-block"> {{ __("Login") }} </button>

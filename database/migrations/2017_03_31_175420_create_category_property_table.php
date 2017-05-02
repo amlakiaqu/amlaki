@@ -14,8 +14,11 @@ class CreateCategoryPropertyTable extends Migration
     public function up()
     {
         Schema::create('category_property', function (Blueprint $table) {
+            // Primary Key
+            $table->increments('id');
+
             // Other Columns
-            $table->boolean('required')->default(false);            
+            $table->boolean('required')->default(true);
 
             // Foreign Keys
             $table->integer('category_id')->unsigned();

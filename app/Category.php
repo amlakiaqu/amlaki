@@ -3,9 +3,11 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Backpack\CRUD\CrudTrait;
 
 class Category extends Model
 {
+    use CrudTrait;
     /**
      * Table Columns:
      *  - id
@@ -25,6 +27,10 @@ class Category extends Model
      * @var string
      */
     protected $table = "category";
+
+    protected $fillable = ['name', 'code'];
+
+    protected $guarded = ['id'];
 
     /**
      * Indicates if the model should be timestamped.

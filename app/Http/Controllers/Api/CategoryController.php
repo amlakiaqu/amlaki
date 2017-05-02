@@ -22,6 +22,9 @@ class CategoryController extends Controller
             foreach($category->properties as $property){
                 $property->title = __($property->title);
                 $property->extra_settings = json_decode($property->extra_settings);
+                if($property->extra_settings && isset($property->extra_settings->hint)){
+                    $property->extra_settings->hint = __($property->extra_settings->hint);
+                }
                 $property->required = $property->pivot->required;
                 unset($property->pivot);
             }

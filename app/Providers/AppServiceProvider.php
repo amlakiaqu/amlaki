@@ -22,7 +22,7 @@ class AppServiceProvider extends ServiceProvider
         Validator::extend('phone', function ($attribute, $value, $parameters, $validator) {
             $pattern = config('constants.PHONE_VALIDATION_REGX');
             return preg_match($pattern, $value) == 1;
-        }, __('Enter a valid phone number'));
+        });
 
         // Set the locale of faker
         /*

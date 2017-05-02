@@ -3,9 +3,11 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Backpack\CRUD\CrudTrait;
 
 class Post extends Model
 {
+    use CrudTrait;
     /**
      * Table Columns:
      *  - id
@@ -75,4 +77,24 @@ class Post extends Model
      */
     public function medias(){return $this->hasMany('App\PostMedia');}
 
+    /*
+    |--------------------------------------------------------------------------
+    | Functions
+    |--------------------------------------------------------------------------
+    */
+
+    /**
+     * Get the post image url.
+     *
+     * @param  string  $value
+     * @return string
+     */
+    public function getImageAttribute($value)
+    {
+        if(filter_var($value, FILTER_VALIDATE_URL) !== false){
+            return $value;
+        }else{
+            return route('getFile', ["path" => \Crypt::encrypt($value)]);
+        }
+    }
 }

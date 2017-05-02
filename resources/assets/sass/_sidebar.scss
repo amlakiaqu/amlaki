@@ -7,10 +7,11 @@
     min-width : 220px;
     max-width : 220px;
     float     : left;
-    height    : 100vh;
+    /*height    : 100vh;*/
     position  : relative;
     overflow-y: auto;
     overflow-x: hidden;
+    height: auto;
 }
 
 #sidebar > div.sidebar-container {
@@ -37,7 +38,7 @@
     }
 
     .row-offcanvas-left {
-        left: -220px;
+        /*left: -220px;*/
     }
 
     .row-offcanvas-left.active {
@@ -63,4 +64,11 @@ html[dir='rtl'] {
 .posts-search-container {
     padding      : 10px 0;
     border-bottom: 1px solid #ccc;
+}
+
+
+#filters-container {
+    border-top: 1px solid #ccc;
+    margin-top: 10px;
+    padding-top: 10px;
 }

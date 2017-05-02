@@ -218,10 +218,69 @@ window.createPostModal = function(url, postId){
             var distSelector = undefined;
             var append = false;
             var importJQuery = true;
-            options["message"] = _.renderTemplate(templateId, {"data": data}, distSelector, append, importJQuery);
+
+            var postImages = [];
+            postImages.push(response.image);
+            if(response.medias && _.isArray(response.medias) && response.medias.length > 0){
+                $.each(response.medias, function(index, mediaObject){
+                    if(mediaObject.type === "IMAGE"){
+                        postImages.push(mediaObject.media_url);
+                    }
+                });
+            }
+
+            var imagesHtml = '<div class="post-image-container row">';
+            var imageTemplate = '<div class="{imageContainerClass}"><img src="{imageUrl}" style="width: 100%;height: 100%;"></div>';
+            if(postImages.length === 1){
+                imagesHtml += imageTemplate.format({"imageContainerClass": "col-xs-8 col-xs-offset-2", "imageUrl": postImages[0]});
+            }else if(postImages.length === 2){
+                $.each(postImages, function(index, imageUrl){
+                    imagesHtml += imageTemplate.format({"imageContainerClass": "col-xs-6", "imageUrl": imageUrl});
+                });
+            }else if(postImages.length >= 3){
+                $.each(_.range(0, 3), function(index){
+                    imagesHtml += imageTemplate.format({"imageContainerClass": "col-xs-4", "imageUrl": postImages[index]});
+                });
+            }
+            imagesHtml += '</div>';
+            var shareUrl = Laravel.pages.home + "?post_id=" + postId;
+            var shareButtonId = 'btn-share-post-' + postId;
+            options["message"] = imagesHtml + _.renderTemplate(templateId, {"data": data}, distSelector, append, importJQuery) +
+                '<div style="text-align: left;"><input style="position: absolute;top: -100%;" id="{id}-target-input" value="{shareUrl}"> <button class="btn btn-link {id}" data-clipboard-target="#{id}-target-input"> <i class="fa fa-share-alt" aria-hidden="true"></i> مشاركة</button> </button></div>'.format({'id': shareButtonId, 'shareUrl': shareUrl});
             options["className"] = "post-info-modal";
             var dialog = bootbox.dialog(options);
             dialog.attr("data-post-id", response.id);
+            var clipboard = null;
+            $('.post-info-modal').on('shown.bs.modal', function(){
+                clipboard = new Clipboard('.' + shareButtonId, {});
+                clipboard.on('success', function(e) {
+                    e.clearSelection();
+                    var message = Laravel.strings.general.copy_to_clipboard_success;
+                    var type = "success";
+                    var allowDismiss = true;
+                    var delay = 2500;
+                    generateNotification(message, type, allowDismiss, delay);
+                });
+
+                clipboard.on('error', function(e){
+                    var message = Laravel.strings.general.copy_to_clipboard_fail;
+                    $('#' + shareButtonId + '-target-input').attr('style', '');
+                    var type = "danger";
+                    var allowDismiss = true;
+                    var delay = 3500;
+                    generateNotification(message, type, allowDismiss, delay);
+                });
+            });
+
+            $('.post-info-modal').on('hide.bs.modal', function () {
+                if(clipboard){
+                    clipboard.destroy();
+                }
+            });
+
+            // var clipboard = new Clipboard('#{0}'.format(shareButtonId));
+
+
         },
         "error": function (response) {
             console.log(response);
@@ -344,20 +403,6 @@ window.createPostCreateModal = function () {
         }
     });
     $(modalId).modal('show');
-};
-
-window.initFormsValidator = function (containerId) {
-    $.each($("#" + containerId).find('form'), function (i, element) {
-        var el = $(element);
-        if (el.data('skip-validator') !== "true") {
-            el.validator({
-                feedback: {
-                    success: 'glyphicon-ok',
-                    error: 'glyphicon-remove'
-                }
-            });
-        }
-    });
 };
 
 window.generateNotification = function (message, type, allowDismiss, delay) {
@@ -610,6 +655,29 @@ window.generateCreatePostForm = function(containerSelector, category, formProper
      * formFields
      */
     if(_.isArray(renderedProperties)&& _.size(renderedProperties) > 0){
+        var postMediaImagesTemplate = "";
+        if(Laravel.config.postMediaImageCount > 0){
+            $.each(_.range(1, Laravel.config.postMediaImageCount + 1), function(index, count){
+                var required = "";
+                var inputName = Laravel.config.postMediaImageNamingTemplate.format(count);
+                if(Laravel.config.postMediaImageRequiredCount <= count){
+                    required = 'required="required"';
+                }
+                postMediaImagesTemplate += '<div class="image-file-input-container" ><input type="file" class="filestyle" name="{inputName}" accept="image/*" {required}></div>'.
+                format({
+                    "required": required,
+                    "inputName": inputName
+                });
+            });
+        }
+
+        if(postMediaImagesTemplate !== "") {
+            postMediaImagesTemplate = '<span class="image-section-help-message">' + Laravel.strings.create_post_modal.form.image_required_help_text + '</span>' + postMediaImagesTemplate;
+            postMediaImagesTemplate = '<label>' + Laravel.strings.create_post_modal.form.image_group_label + '</label>' + postMediaImagesTemplate;
+        }
+
+        renderedProperties.push(postMediaImagesTemplate);
+
         /**
          * Create Submit Button
          */
@@ -647,16 +715,26 @@ window.generateCreatePostForm = function(containerSelector, category, formProper
         };
         var renderedForm = _.renderTemplate(formTemplateId, formData);
         container.html(renderedForm);
+
+        // Initialize the 'filestyle' file inputs
+        $('#' + formId).find('input[type="file"].filestyle').filestyle({
+            "buttonText": " " + Laravel.strings.create_post_modal.form.file_image_input_button_text,
+            "buttonName": "btn-primary",
+            "iconName": "glyphicon glyphicon-picture",
+            "placeholder": ""
+        });
     }
 };
 
 window.generateForm = function(schema, formProperties) {
     var formId = formProperties.id;
+    var skipRequired = formProperties.skip_required || false;
     var renderedProperties = [];
     $.each(schema, function(index, propertyObject){
         var valueType = propertyObject.value_type;
         var inputType = getHtmlInputTypeByPropertyType(valueType);
         var inputId = formId + "-" + propertyObject.code;
+        var inputValue = propertyObject.input_value || undefined;
         var inputTemplateId = undefined;
         var containerTemplateId = undefined;
         var inputTemplateData = undefined;
@@ -682,10 +760,13 @@ window.generateForm = function(schema, formProperties) {
             if(inputId){
                 extraAttributes += 'id="' + inputId + '" ';
             }
-            if(propertyObject.required === 1){
+            if(propertyObject.required === 1 && !skipRequired){
                 requiredField = true;
                 extraAttributes += " required ";
             }
+            // if(inputValue){
+            //     extraAttributes += ' value="' + inputValue + '" ';
+            // }
             if(valueType === "FLOAT"){
                 extraAttributes += ' pattern="' + Constants.REGEX_STRING.FLOAT + '" ';
             }
@@ -724,7 +805,7 @@ window.generateForm = function(schema, formProperties) {
             inputTemplateData = {
                 "type": inputType,
                 "name": propertyObject.code,
-                "value": extraSettings !== undefined ? extraSettings.default || "": "",
+                "value": extraSettings !== undefined ? extraSettings.default || inputValue: "",
                 "classes": classes,
                 "extraAttributes": extraAttributes,
                 "prefixAddon": prefixAddon,
@@ -792,5 +873,28 @@ window.generateForm = function(schema, formProperties) {
         };
 
         return _.renderTemplate(formTemplateId, formData);;
+    }
+};
+
+window.generateFilterFields = function(category){
+    var filterContainerId = Constants.SIDEBAR_FILTERS_CONTAINER_ID;
+    console.log('category', category);
+    if(!category){
+        $("#" + filterContainerId).html('');
+    }else{
+        var html = "";
+        $.each(category.properties, function(index, propertyObject){
+            var inputTemplate = '<div class="form-group"><label for="{id}" class="control-label">{label}</label><div class=""><input type="{type}" class="form-control {class}" id="{id}" placeholder="{placeholder}" data-property-code="{propertyCode}"></div></div>';
+            var inputTemplateData = {
+                "id": "FILTER_" + propertyObject["code"],
+                "class": 'filter-input',
+                "label": propertyObject["title"],
+                "type": "text",
+                "placeholder": propertyObject["hint"] || propertyObject["title"],
+                "propertyCode": propertyObject["code"]
+            };
+            html += inputTemplate.format(inputTemplateData);
+        });
+        $("#" + filterContainerId).html(html);
     }
 };

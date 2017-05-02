@@ -6,7 +6,7 @@
         <!-- Sidebar user panel -->
         <div class="user-panel">
           <div class="pull-left image">
-            <img src="https://placehold.it/160x160/00a65a/ffffff/&text={{ mb_substr(Auth::user()->name, 0, 1) }}" class="img-circle" alt="User Image">
+            <img src="https://placehold.it/160x160/ffffff/3c8dbc/&text={{ mb_substr(Auth::user()->name, 0, 2) }}" class="img-circle" alt="User Image">
           </div>
           <div class="pull-left info">
             <p>{{ Auth::user()->name }}</p>
@@ -19,13 +19,22 @@
           <!-- ================================================ -->
           <!-- ==== Recommended place for admin menu items ==== -->
           <!-- ================================================ -->
-          <li><a href="{{ url(config('backpack.base.route_prefix', 'admin').'/dashboard') }}"><i class="fa fa-dashboard"></i> <span>{{ trans('backpack::base.dashboard') }}</span></a></li>
-          <li><a href="{{ url(config('backpack.base.route_prefix', 'admin') . '/elfinder') }}"><i class="fa fa-files-o"></i> <span>File manager</span></a></li>
-          <li><a href="{{ url(config('backpack.base.route_prefix', 'admin').'/log') }}"><i class="fa fa-terminal"></i> <span>Logs</span></a></li>
+          <li><a href="{{ url(config('backpack.base.route_prefix', 'admin').'/dashboard') }}">{{ trans('backpack::base.dashboard') }}</a></li>
+          <li><a href="{{ url(config('backpack.base.route_prefix', 'admin') . '/elfinder') }}">File manager</a></li>
+          <li><a href="{{ url(config('backpack.base.route_prefix', 'admin').'/log') }}">{{ trans('Logs')  }}</a></li>
+
+          <li class="header">{{ trans('Management') }}</li>
+          <li><a href="{{ url('admin/users') }}">{{ trans('Users') }}</a></li>
+          <li><a href="{{ url('admin/posts') }}">{{ trans('Posts') }}</a></li>
+          <li><a href="{{ url('admin/post_property') }}">{{ trans('Posts Properties')  }}</a></li>
+          <li><a href="{{ url('admin/categories') }}">{{ trans('Categories')  }}</a></li>
+          <li><a href="{{ url('admin/category_property') }}">{{ trans('Categories Properties')  }}</a></li>
+          <li><a href="{{ url('admin/requests') }}">{{ trans('Requests')  }}</a></li>
+          <li><a href="{{ url('admin/request_property') }}">{{ trans('Requests Properties')  }}</a></li>
 
           <!-- ======================================= -->
-          <li class="header">{{ trans('backpack::base.user') }}</li>
-          <li><a href="{{ url(config('backpack.base.route_prefix', 'admin').'/logout') }}"><i class="fa fa-sign-out"></i> <span>{{ trans('backpack::base.logout') }}</span></a></li>
+{{--          <li class="header">{{ trans('backpack::base.user') }}</li>--}}
+{{--          <li><a href="{{ url(config('backpack.base.route_prefix', 'admin').'/logout') }}"><i class="fa fa-sign-out"></i> <span>{{ trans('backpack::base.logout') }}</span></a></li>--}}
         </ul>
       </section>
       <!-- /.sidebar -->

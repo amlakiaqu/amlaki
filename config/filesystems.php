@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'default' => 'local',
+    'default' => 'dropbox',
 
     /*
     |--------------------------------------------------------------------------
@@ -51,7 +51,7 @@ return [
         // used for Backpack/CREUD
         'uploads' => [
             'driver' => 'local',
-            'root' => public_path('uploads'),
+            'root' => storage_path(),
         ],
 
         // used for Backpack/LogManager
@@ -74,6 +74,12 @@ return [
             'region' => env('AWS_REGION'),
             'bucket' => env('AWS_BUCKET'),
         ],
+        'dropbox' => [
+            'driver' => 'dropbox',
+            'visibility' => 'public',
+            'authorizationToken' => env('DROPBOX_TOKEN'),
+            'app' => 'Amlaki'
+        ]
 
     ],
 

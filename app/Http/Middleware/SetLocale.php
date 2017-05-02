@@ -23,11 +23,11 @@ class SetLocale
             // Set the local for the request depending on "Accept-Language" header.
             // If "Accept-Language" header doesn't exist, then the default language will be applied
             $lang = $request->header("Accept-Language", config('app.locale'));
-            if ($lang && $lang != config('app.locale', 'en')) {
+            if ($lang && $lang != config('app.locale', config('fallback_locale', 'en'))) {
                 if (in_array($lang, config('app.supported_languages', ['en']))) {
                     \App::setLocale($lang);
                 } else {
-                    \App::setlocale(config('app.locale', 'en'));
+                    \App::setLocale(config('app.locale', config('fallback_locale', 'en')));
                 }
             }
         }

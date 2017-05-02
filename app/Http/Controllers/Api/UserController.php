@@ -124,7 +124,7 @@ class UserController extends Controller
         $user =  User::select(["id", "name"])->with(["requests" => function($query){
             $query->with(["category" => function($categoryQuery){
                 $categoryQuery->select(["id", "name"]);
-            }, "properties"])->select(["id", "user_id", "category_id", "created_at"]);
+            }, "properties"])->select(["id", "user_id", "category_id", "created_at"])->orderBy('created_at','DESC');
         }])->findOrFail($user->id);
 
         foreach($user->requests as $request){

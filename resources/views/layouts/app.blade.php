@@ -7,10 +7,12 @@
 
     <title>{{ config('app.name', 'Laravel') }}</title>
 
-    <!-- App Styles -->
-    <link rel="stylesheet" href="{{ mix('css/app.css') }}">
+    <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="{{ asset('css/smoke.min.css') }}">
     <link rel="stylesheet" href="//cdn.datatables.net/1.10.15/css/jquery.dataTables.min.css">
+
+    <!-- App Styles -->
+    <link rel="stylesheet" href="{{ mix('css/app.css') }}">
 
     @if ( config('app.locale') == "ar")
     <!-- Bootstrap RTL custom css library  -->
@@ -32,6 +34,14 @@
             'apiToken' => Auth::user() ? Auth::user()->api_token : null,
             'dir' => config('app.locale') == "ar" ? "rtl" : "ltr",
             'locale' => config('app.locale', 'en'),
+            'config' => [
+                'postMediaImageCount' => 3,
+                'postMediaImageRequiredCount' => 1,
+                'postMediaImageNamingTemplate' => 'MEDIA_IMAGE_{0}'
+            ],
+            "pages" => [
+                "home" => route('home')
+            ],
             'apis' => [
               "posts" => [
                 "list" => route('posts.index'),
@@ -48,7 +58,9 @@
                 "getRequests" => urldecode(route('users.requests', ["user" => "<% print(id) %>"])),
               ],
               "requests" => [
-                "get" => urldecode(route('requests.show', ["request" => "<% print(id) %>"])),
+                "store" => route('requests.store'),
+                "update" => str_replace('ID','{0}', route('requests.update', ["request" => "ID"])),
+                "get" => str_replace('ID','{0}', route('requests.show', ["request" => "ID"])),
                 "delete" => urldecode(route('requests.destroy', ["request" => "<% print(id) %>"])),
               ]
             ],
@@ -57,7 +69,14 @@
                     "loading_message" => __("Loading").' ...',
                     "description" => __("Description"),
                     "property" => __("Property"),
-                    "no_posts" => __("No Posts")
+                    "no_posts" => __("No Posts"),
+                    "copy_to_clipboard_success" => __("Text copied to clipboard successfully"),
+                    "copy_to_clipboard_fail" => __("Failed To Copy text to clipboard, please try again later")
+                ],
+                "validation" => [
+                    "required" => __("This field is required"),
+                    "min" => __("This field length must be at least {0} character(s)"),
+                    "max" => __("The max length is {0}")
                 ],
                 "post_category_type_modal" => [
                     "modal_title" => __('Select Post Category'),
@@ -68,7 +87,10 @@
                     "submit_form_button_text" => __("Add Post"),
                     "form" => [
                         "title_field_title" => __("Post Title"),
-                        "title_field_hint" => __("Test Post")
+                        "title_field_hint" => __("Test Post"),
+                        "image_group_label" => __("Select Post Images"),
+                        "file_image_input_button_text" => __("Select Image"),
+                        "image_required_help_text" => __("You must select at least one image")
                     ]
                 ],
                 "edit_post_modal" => [
@@ -122,6 +144,15 @@
                         "confirm" => __("Delete"),
                         "cancel" => __("Cancel")
                     ]
+                ],
+                "create_request_modal" => [
+                    "modal_title" => __("Create Request"),
+                    "help_message" => __("Leave the field empty if you need all values"),
+                    "skip_field_value_checkbox_text" => __("Check the box if you need to ignore the {0} value"),
+                    "btn" => [
+                        "submit" => __("Create Request"),
+                        "edit" => __("Edit Request")
+                    ]
                 ]
             ],
             "assets" => [
@@ -138,6 +169,13 @@
 <body>
     <div id="modals-container"></div>
     <div id="app">
+        <div id="social-icons-container">
+            <a class="social-icon" href="javascript:void(0);" title="facebook" data-toggle="tooltip" data-placement="bottom"><i aria-hidden="true" class="fa fa-facebook-official fa-3x"></i></a>
+            <a class="social-icon" href="javascript:void(0);" title="twitter" data-toggle="tooltip" data-placement="bottom"><i aria-hidden="true" class="fa fa-twitter fa-3x"></i></a>
+            <a class="social-icon" href="javascript:void(0);" title="instagram" data-toggle="tooltip" data-placement="bottom"><i aria-hidden="true" class="fa fa-instagram fa-3x"></i></a>
+            <a class="social-icon" href="javascript:void(0);" title="youtube" data-toggle="tooltip" data-placement="bottom"><i aria-hidden="true" class="fa fa-youtube fa-3x"></i></a>
+            <a class="social-icon" href="javascript:void(0);" title="snapchat" data-toggle="tooltip" data-placement="bottom"><i aria-hidden="true" class="fa fa-snapchat-ghost fa-3x"></i></a>
+        </div>
         <nav class="navbar navbar-default navbar-fixed-top">
             <div class="container-fluid">
                 <div class="navbar-header">
@@ -194,6 +232,11 @@
                                         <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();"><i class="fa fa-sign-out" aria-hidden="true"></i> {{ __('Logout') }}</a>
                                         <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;"></form>
                                     </li>
+                                    @if(Auth::user()->is_admin == true)
+                                    <li>
+                                        <a href="{{ url('admin') }}"><i class="fa fa-tachometer" aria-hidden="true"></i> {{ __('Admin Dashboard') }}</a>
+                                    </li>
+                                    @endif
                                 </ul>
                             </li>
                         @endif
@@ -225,13 +268,13 @@
                       </select>
                   </div>
               </div>
+              <div class="col-md-12">
+                  <div id="filters-container"></div>
+              </div>
           </div>
 
           <div id="main">
               <div class="col-md-12">
-              	  <p class="visible-xs">
-                    <button type="button" class="btn btn-primary btn-xs" data-toggle="offcanvas"><i class="glyphicon glyphicon-chevron-left"></i></button>
-                  </p>
                   @yield('content')
               </div>
           </div>
@@ -239,28 +282,30 @@
     </div>
 
     <!-- Scripts -->
-    <script src="https://use.fontawesome.com/a8e79672ec.js"></script>
-
     <script src="{{ mix('js/app.js') }}"></script>
+    <script src="{{ asset('js/watch.min.js')  }}"></script>
 
     <script src="https://use.fontawesome.com/a8e79672ec.js"></script>
     <script src="//cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.6.0/clipboard.min.js"></script>
 
-    <script src="{{ asset('js/validator.min.js') }}"></script>
     <script src="{{ asset('js/bootstrap-notify.min.js') }}"></script>
     <script src="{{ asset('js/bootbox.min.js') }}"></script>
     <script src="{{ asset('js/js.storage.min.js') }}"></script>
     <script src="{{ asset('js/smoke/smoke.min.js')  }}"></script>
-    <script src="{{ asset('js/jquery_validation/jquery.validate.min.js')  }}"></script>
-    <script src="{{ asset('js/jquery_validation/additional-methods.min.js')  }}"></script>
-    <script src="{{ asset('js/moment-with-locales.js')  }}"></script>
+    <script src="{{ asset('js/moment/moment.min.js')  }}"></script>
+    <script src="{{ asset('js/bootstrap-filestyle.min.js')  }}"></script>
 
     <script src="{{ mix('js/login.js') }}"></script>
-    <script src="{{ mix('js/resources.js')  }}"></script>
 
+    <script src="{{ mix('js/resources/post.js')  }}"></script>
+    <script src="{{ mix('js/resources/request.js')  }}"></script>
+
+    <!-- Current Locale is {{ config('app.locale', 'en') }} -->
+    <!-- Add Locale files  -->
     @if (config('app.locale', 'en') == "ar")
-        <script src="{{ asset('js/smoke/lang/ar.min.js')  }}"></script>
-        <script src="{{ asset('js/jquery_validation/localization/messages_ar.min.js')  }}"></script>
+        <script src="{{ asset('js/smoke/lang/ar.min.js') }}"></script>
+        <script src="{{ asset('js/moment/locale/ar.js')  }}"></script>
     @endif
 
     @yield('scripts')

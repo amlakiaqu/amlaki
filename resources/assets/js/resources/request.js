@@ -136,4 +136,240 @@ $(document).ready(function(){
             "error": function(jqXHR){console.log(jqXHR);}
         });
     });
+
+    $(document).on('click', "#btn-add-request", function(){
+        function create_request_handler(category) {
+            var submitButtonAttributes = '';
+            submitButtonAttributes += 'class="btn btn-success btn-block" type="submit"';
+            var buttonTemplateData = {
+                "attributes": submitButtonAttributes,
+                "text": Laravel.strings.create_request_modal.btn.submit,
+                'icon': 'fa fa-plus'
+            };
+            var formAttributes = "";
+            formAttributes += 'data-category-id="{0}" '.format(category.id);
+            var formProperties = {
+                "id": Constants.CREATE_REQUEST_FORM_ID,
+                "url": Laravel.apis.requests.store,
+                "method": "POST",
+                "classes": "",
+                "button_template_data": buttonTemplateData,
+                "extra_attrs": formAttributes,
+                "skip_required": true
+            };
+
+            var schema = [];
+            schema.push({
+                "code": "category_id",
+                "value_type": "HIDDEN",
+                "title": "",
+                "required": 1,
+                "id": 0,
+                "extra_settings": {
+                    "default": category.id,
+                    "hint": ""
+                }
+            });
+
+            if (category && category.properties) {
+                $.each(category.properties, function (index, property) {
+                    schema.push(property);
+                });
+            }
+
+            var renderedForm = generateForm(schema, formProperties);
+            var modalId = Constants.CREATE_REQUEST_MODAL_ID;
+            var templateId = Constants.MODAL_TEMPLATE_ID;
+            var helpMessageHtml = '<p class="bg-info"><i class="fa fa-info" aria-hidden="true" style="margin-right: 6px;font-size: 16px;margin-left: 5px;"></i> ' + Laravel.strings.create_request_modal.help_message + '</p> ';
+            var data = {
+                "modal": {
+                    "id": modalId,
+                    "title": Laravel.strings.create_request_modal.modal_title,
+                    "class": "auto-destroy",
+                    "backdrop": "static",
+                    "keyboard": "false",
+                    "body": helpMessageHtml + renderedForm,
+                    "no_footer": true,
+                    "large": false
+                }
+            };
+            var distSelector = "#" + Constants.MODALS_CONTAINER_ID;
+            var append = true;
+            _.renderTemplate(templateId, data, distSelector, append);
+            $(".modal").modal("hide");
+            $("#" + modalId).modal("show");
+        }
+
+        var categoriesOptions = [{"text": Laravel.strings.post_category_type_modal.default_item_text, "value": ""}];
+        $.each(Storages.localStorage.get('categories'), function(index, category){
+            categoriesOptions.push({
+                "text": category.name,
+                "value": category.id
+            });
+        });
+
+        bootbox.prompt({
+            title: Laravel.strings.post_category_type_modal.modal_title,
+            inputType: 'select',
+            inputOptions: categoriesOptions,
+            buttons: {
+                confirm: {
+                    label: Laravel.strings.post_category_type_modal.modal_confirm_button_text,
+                    className: 'btn-success'
+                },
+                cancel: {
+                    label: 'Cancel',
+                    className: 'btn-danger hidden'
+                }
+            },
+            callback: function (categoryId) {
+                if(categoryId === null){
+                    // the dismiss button clicked, and the post creation modal should be hidden too
+                    return false;
+                }else if(categoryId === ""){
+                    // The confirm button click but without selecting value
+                    return false;
+                }else{
+                    var category = _.find(Storages.localStorage.get('categories'), {id: parseInt(categoryId)});
+                    if(category){
+                        create_request_handler(category);
+                    }
+                }
+            }
+        });
+    });
+
+    $(document).on('click', ".btn-edit-request", function(e){
+        e.preventDefault();
+        var requestId = $(this).data('request-id');
+        var editRequestHandler = function(response){
+            var category = response.category;
+            var submitButtonAttributes = '';
+            submitButtonAttributes += 'class="btn btn-warning btn-block" type="submit"';
+            var buttonTemplateData = {
+                "attributes": submitButtonAttributes,
+                "text": Laravel.strings.create_request_modal.btn.edit,
+                'icon': 'fa fa-edit'
+            };
+            var formAttributes = "";
+            formAttributes += 'data-category-id="{0}" '.format(category.id);
+            formAttributes += 'data-request-id="{0}" '.format(requestId);
+            var formProperties = {
+                "id": Constants.UPDATE_REQUEST_FORM_ID,
+                "url": Laravel.apis.requests.update.format(requestId),
+                "method": "PUT",
+                "classes": "",
+                "button_template_data": buttonTemplateData,
+                "extra_attrs": formAttributes,
+                "skip_required": true
+            };
+
+            var schema = [];
+            schema.push({
+                "code": "category_id",
+                "value_type": "HIDDEN",
+                "title": "",
+                "required": 1,
+                "id": 0,
+                "extra_settings": {
+                    "default": category.id,
+                    "hint": ""
+                }
+            });
+            var requestProperties = response.properties;
+            console.log('requestProperties', requestProperties);
+            if (category && category.properties) {
+                $.each(category.properties, function (index, property) {
+                    var requestProperty = _.filter(requestProperties, function(o){return o.id === property.id})[0];
+                    console.log('  -- requestProperty', requestProperty);
+                    if(requestProperty){
+                        property.input_value = requestProperty.input_value;
+                    }
+                    schema.push(property);
+                });
+            }
+            console.log('schema', schema);
+
+            var renderedForm = generateForm(schema, formProperties);
+            var modalId = Constants.UPDATE_REQUEST_MODAL_ID;
+            var templateId = Constants.MODAL_TEMPLATE_ID;
+            var helpMessageHtml = '<p class="bg-info"><i class="fa fa-info" aria-hidden="true" style="margin-right: 6px;font-size: 16px;margin-left: 5px;"></i> ' + Laravel.strings.create_request_modal.help_message + '</p> ';
+            var data = {
+                "modal": {
+                    "id": modalId,
+                    "title": Laravel.strings.create_request_modal.modal_title,
+                    "class": "auto-destroy",
+                    "backdrop": "static",
+                    "keyboard": "false",
+                    "body": helpMessageHtml + renderedForm,
+                    "no_footer": true,
+                    "large": false
+                }
+            };
+            var distSelector = "#" + Constants.MODALS_CONTAINER_ID;
+            var append = true;
+            _.renderTemplate(templateId, data, distSelector, append);
+            $(".modal").modal("hide");
+            $("#" + modalId).modal("show");
+        };
+
+        $.ajax({
+            "url": Laravel.apis.requests.get.format(requestId),
+            "method": "GET",
+            "success": editRequestHandler,
+            "error": function(jqXHR){console.log(jqXHR)}
+        });
+    });
+
+    $(document).on('submit', '#{0}'.format(Constants.CREATE_REQUEST_FORM_ID) , function(e){
+        e.preventDefault();
+        var data = $(this).serializeArray().asMap('name', 'value');
+        $.each(data, function(key, value){
+            if(value === ""){
+                data[key] = null;
+            }
+        });
+        $.ajax({
+            "url": Laravel.apis.requests.store,
+            "method": "POST",
+            "dataType": 'json',
+            "data": JSON.stringify(data),
+            "success": function(response){
+                var message = response.message;
+                var type = "success";
+                var allowDismiss = true;
+                var delay = 2500;
+                generateNotification(message, type, allowDismiss, delay);
+                $('.modal').modal('hide');
+            },
+            "error": function(jqXHR){console.log(jqXHR)}
+        });
+    });
+
+    $(document).on('submit', '#{0}'.format(Constants.UPDATE_REQUEST_FORM_ID), function(e){
+        e.preventDefault();
+        var requestId = $(this).data('request-id');
+        var data = $(this).serializeArray().asMap('name', 'value');
+        $.each(data, function(key, value){
+            if(value === ""){
+                data[key] = null;
+            }
+        });
+        $.ajax({
+            "url": Laravel.apis.requests.update.format(requestId),
+            "method": "PUT",
+            "dataType": 'json',
+            "data": JSON.stringify(data),
+            "success": function(response){
+                var message = response.message;
+                var type = "success";
+                var allowDismiss = true;
+                var delay = 2500;
+                generateNotification(message, type, allowDismiss, delay);
+                $('.modal').modal('hide');
+            },
+            "error": function(jqXHR){console.log(jqXHR)}
+        });
+    });
+
 });

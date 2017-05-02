@@ -13,10 +13,8 @@ const {mix} = require('laravel-mix');
 
 mix.js('resources/assets/js/app.js', 'public/js')
     .babel(['resources/assets/js/login.js'], 'public/js/login.js')
-    .babel([
-        'resources/assets/js/resources/post.js',
-        'resources/assets/js/resources/request.js'
-    ], 'public/js/resources.js')
+    .babel(['resources/assets/js/resources/request.js'], 'public/js/resources/request.js')
+    .babel(['resources/assets/js/resources/post.js'], 'public/js/resources/post.js')
     .sass('resources/assets/sass/app.scss', 'public/css')
     .sass('resources/assets/sass/index.scss', 'public/css');
 
@@ -25,8 +23,8 @@ if (mix.config.inProduction) {
 }
 
 mix.copy('resources/assets/js/home.js', 'public/js')
-    .copyDirectory('resources/assets/js/vendors/', 'public/js')
-    .copy('node_modules/bootstrap-validator/dist/validator.min.js', 'public/js');
+    .copyDirectory('resources/assets/js/vendors/', 'public/js');
+// .copy('node_modules/bootstrap-validator/dist/validator.min.js', 'public/js');
 
 mix.copy('resources/assets/css/vendors/', 'public/css');
 

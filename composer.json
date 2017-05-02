@@ -5,13 +5,14 @@
     "license": "MIT",
     "type": "project",
     "require": {
-        "php": ">=5.6.4",
+        "php": ">=7.1.1",
         "backpack/base": "^0.7.16",
         "backpack/crud": "^3.2",
         "backpack/logmanager": "^2.3",
         "laravel/framework": "5.4.*",
         "laravel/tinker": "~1.0",
         "pusher/pusher-php-server": "^2.6",
+        "spatie/flysystem-dropbox": "^1.0",
         "webpatser/laravel-uuid": "2.*"
     },
     "require-dev": {

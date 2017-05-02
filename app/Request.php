@@ -3,9 +3,11 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Backpack\CRUD\CrudTrait;
 
 class Request extends Model
 {
+    use CrudTrait;
     /**
      * Table Columns:
      *  - id
@@ -33,6 +35,10 @@ class Request extends Model
     protected $guarded = ["id"];
 
     public $timestamps = true;
+
+    public $casts = [
+
+    ];
 
 
     /*
@@ -62,4 +68,11 @@ class Request extends Model
      */
     public function properties(){return $this->belongsToMany('App\Property', 'request_property', 'request_id', 'property_id')->withPivot('value');}
 
+    /*
+     * Get request title
+     */
+    public function getTitleAttribute()
+    {
+        return 'Request for `' . $this->user->username. '` user in `' . $this->category->name . '` category.' ;
+    }
 }

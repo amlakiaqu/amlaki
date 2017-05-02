@@ -27,6 +27,11 @@ window.Constants = Object.freeze({
     "BASIC_INPUT_TEMPLATE_ID": "input-basic-template",
     "BASIC_INPUT_CONTAINER_TEMPLATE_ID": "input-basic-container-template",
     "BASIC_INPUT_TYPES": ['STRING', 'NUMBER', 'FLOAT', 'DATE', "HIDDEN"],
+    "SIDEBAR_FILTERS_CONTAINER_ID": "filters-container",
+    "CREATE_REQUEST_MODAL_ID": "create-request-modal",
+    "CREATE_REQUEST_FORM_ID": "create-request-form",
+    "UPDATE_REQUEST_MODAL_ID": "update-request-modal",
+    "UPDATE_REQUEST_FORM_ID": "update-request-form",
     "REGEX": {
         "FLOAT": /^-?\d*(\.\d+)?$/g
     },

@@ -12,6 +12,7 @@
 | Note: The name space is "App\Http\Controller\Api"
 |
 */
+use Illuminate\Http\Request;
 
 Route::group(["prefix" => "v1"], function () {
     Route::group(["middleware" => 'auth:api'], function () {
@@ -20,12 +21,24 @@ Route::group(["prefix" => "v1"], function () {
 
         // Resources
         Route::get('users/{user}/requests', 'UserController@getRequests')->name('users.requests');
+        Route::put('requests/{id}', 'RequestController@update')->name('requests.update');
+        Route::get('requests/{id}', 'RequestController@show')->name('requests.show');
 
-        Route::resource('requests', 'RequestController', ['only' => ['show', 'store', 'update', 'destroy']]);
+        Route::resource('requests', 'RequestController', ['only' => ['store', 'destroy']]);
 
         // Posts Private Routes
         Route::resource('posts', 'PostController', ['only' => ['store', 'update', 'destroy']]);
     });
+
+//    Route::post('/files', function(Request $request){
+//        if( $request->hasFile('image')){
+//            $imageFile = $request->file('image');
+//            $path = \Storage::putFile('images', $imageFile, 'public');
+//            return response()->json(['message' => 'file saved successfully', 'path' => $path]);
+//        }else{
+//            return response()->json(['message' => 'file \'image\' is required'], 400);
+//        }
+//    });
 
     // Public Apis
     // Users Routes

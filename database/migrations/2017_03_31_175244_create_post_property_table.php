@@ -14,6 +14,9 @@ class CreatePostPropertyTable extends Migration
     public function up()
     {
         Schema::create('post_property', function (Blueprint $table) {
+            // Primary Key
+            $table->increments('id');
+
             // Other Columns
             $table->text('value');            
 

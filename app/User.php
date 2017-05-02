@@ -6,17 +6,21 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use App\Notifications\ResetPasswordNotification;
+use Backpack\CRUD\CrudTrait;
 
 class User extends Authenticatable
 {
-    use Notifiable;
-    use SoftDeletes;
+    use Notifiable, SoftDeletes, CrudTrait;
 
     /*
     |--------------------------------------------------------------------------
     | GLOBAL VARIABLES
     |--------------------------------------------------------------------------
     */
+    /**
+     * Table Primary Key
+     */
+    protected $primaryKey = "id";
 
     /**
      * The table associated with the model.
@@ -31,7 +35,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'username', 'email', 'password', 'phone', 'address', 'image', 'api_token'
+        'name', 'username', 'email', 'password', 'address', 'phone', 'api_token', 'is_admin'
     ];
 
     /**
@@ -40,7 +44,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token', 'is_admin', "created_at", "updated_at", "deleted_at"
+        'password', 'remember_token', "created_at", "updated_at", "deleted_at"
     ];
 
     /**
@@ -49,6 +53,17 @@ class User extends Authenticatable
      * @var array
      */
     protected $dates = ['deleted_at'];
+
+    protected $guarded = ["api_token"];
+
+    /**
+     * The attributes that should be casted to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'is_admin' => 'boolean',
+    ];
 
     /*
     |--------------------------------------------------------------------------
@@ -72,6 +87,18 @@ class User extends Authenticatable
         return $this->hasMany('App\Request');
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | Functions
+    |--------------------------------------------------------------------------
+    */
+    public function restore(){
+        if($this->trashed()){
+            $this->restore();
+        }
+        return true;
+    }
+
     /**
      * Send the password reset notification.
      *
@@ -82,5 +109,4 @@ class User extends Authenticatable
     {
         $this->notify(new ResetPasswordNotification($token));
     }
-
 }

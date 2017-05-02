@@ -13,13 +13,15 @@ class CreatePostTable extends Migration
      */
     public function up()
     {
-        Schema::create('post', function (Blueprint $table) {
+        $defaultImageUrl = Config::get("constants.DEFAULT_IMAGE_URL");
+
+        Schema::create('post', function (Blueprint $table) use ($defaultImageUrl) {
             // Primary Key
             $table->increments('id');
 
             // Other Columns
             $table->string('title', 255);
-            $table->string('image', 255);      
+            $table->string('image', 255)->default($defaultImageUrl);
 
             // Foreign Keys
             $table->integer('user_id')->unsigned();
@@ -33,7 +35,6 @@ class CreatePostTable extends Migration
 
             // Created & Updated Columns
             $table->timestamps();
-
         });
     }
 

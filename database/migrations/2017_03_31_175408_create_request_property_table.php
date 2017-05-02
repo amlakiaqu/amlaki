@@ -14,6 +14,9 @@ class CreateRequestPropertyTable extends Migration
     public function up()
     {
         Schema::create('request_property', function (Blueprint $table) {
+            // Primary Key
+            $table->increments('id');
+
             // Other Columns
             $table->text('value');            
 

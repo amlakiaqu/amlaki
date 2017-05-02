@@ -23,8 +23,7 @@ $factory->define(App\User::class, function (Faker\Generator $faker) {
         'password' => $password ?: $password = bcrypt('123123'),
         'remember_token' => null, #str_random(10),
         'is_admin' => false,
-        'image' => $faker->imageUrl,
-        "phone" => $faker->randomElement($phoneIntroArray) . $faker->randomNumber(7),
+        'phone' => $faker->randomElement($phoneIntroArray) . $faker->randomNumber(7),
         'address' => $faker->address
     ];
 });

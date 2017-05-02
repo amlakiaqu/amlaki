@@ -1,7 +1,7 @@
 <script type="text/template" id="input-basic-template">
     <% if(prefixAddon || suffixAddon){print('<div class="input-group">');} %>
         <% if(prefixAddon){print('<div class="input-group-addon">' + prefixAddon + '</div>');} %>
-        <input type="<% print(type); %>" class="<% print(classes); %>" name="<% print(name); %>" value="<% print(value); %>" <% print(extraAttributes); %> />
+        <input type="<% print(type); %>" class="<% print(classes); %>" name="<% print(name); %>" <% if(value) { %> value="<% print(value); %>" <% } %> <% print(extraAttributes); %> />
         <% if(suffixAddon){print('<div class="input-group-addon">' + suffixAddon + '</div>');} %>
     <% if(prefixAddon || suffixAddon){print('</div>');} %>
 </script>

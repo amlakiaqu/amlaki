@@ -47,6 +47,7 @@ return [
     'actions'                   => 'Actions',
     'preview'                   => 'Preview',
     'delete'                    => 'Delete',
+    'restore'                   => 'Restore',
     'admin'                     => 'Admin',
     'details_row'               => 'This is the details row. Modify as you please.',
     'details_row_loading_error' => 'There was an error loading the details. Please retry.',
@@ -59,6 +60,14 @@ return [
         'delete_confirmation_not_message'             => "There's been an error. Your item might not have been deleted.",
         'delete_confirmation_not_deleted_title'       => 'Not deleted',
         'delete_confirmation_not_deleted_message'     => 'Nothing happened. Your item is safe.',
+
+        // Restore Confirmation
+        'restore_confirm'                             => 'Are you sure you want to restore this item',
+        'restore_confirmation_title'                   => 'Item Restored',
+        'restore_confirmation_message'                 => 'The item has been restored successfully.',
+        'restore_confirmation_not_title'               => 'NOT Restored',
+        'restore_confirmation_not_message'             => "There's been an error. Your item might not have been restored.",
+
 
         // DataTables translation
         'emptyTable'     => 'No data available in table',

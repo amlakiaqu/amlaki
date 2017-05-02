@@ -1,6 +1,7 @@
 $(document).ready(function () {
     var postsContainerId = Constants.POSTS_CONTAINER_ID;
-    var postsContainer = $("#" + postsContainerId + ".init");
+    var postsContainer = $("#{0}.init".format(postsContainerId));
+    $.postsContainer = postsContainer;
     if (postsContainer[0]) {
         $.ajax({
             "url": Laravel.apis.posts.list,
@@ -14,4 +15,5 @@ $(document).ready(function () {
         });
     }
     getCategories();
+    viewPost(getUrlParameter('post_id'));
 });

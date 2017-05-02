@@ -16,7 +16,7 @@ class PropertiesTableSeeder extends Seeder
               'title' => 'Price',
               'code' => 'PRICE',
               'value_type' => 'NUMBER',
-              'extra_settings' => json_encode(['hint' => '40,000', 'currency' => 'NIS'])
+              'extra_settings' => json_encode(['hint' => '40000', 'currency' => 'NIS'])
         ]);
 
         // Create Car Model Property
@@ -43,7 +43,10 @@ class PropertiesTableSeeder extends Seeder
         factory(App\Property::class)->create([
             'title' => 'Car Color',
             'code' => 'CAR_COLOR',
-            'value_type' => 'STRING'
+            'value_type' => 'STRING',
+            'extra_settings' => json_encode([
+                "hint" => "silver"
+            ])
         ]);
 
         // Create Car Passengers Count Property

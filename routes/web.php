@@ -12,5 +12,6 @@
 */
 
 Route::get('/', 'HomeController@index')->name('home');
+Route::get('/file/{path}', 'HomeController@getFile')->name('getFile');
 
 Auth::routes();

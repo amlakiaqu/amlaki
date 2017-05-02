@@ -42,14 +42,10 @@ class PostCreatedEvent implements ShouldBroadcast, ShouldQueue
     public function broadcastWith()
     {
         // TODO: write the logic to get the users ids to be notified
-        return $this->message;
-//        return [
-//            'user' => [
-//                'name' => 'Klark Cent',
-//                'age' => 30,
-//                'planet' => 'Crypton',
-//                'abilities' => 'Bashing'
-//            ]
-//        ];
+//        return $this->message;
+        return [
+            'user_ids' => [],
+            "show_for_all" => true
+        ];
     }
 }

@@ -22,7 +22,6 @@ $(document).ready(function () {
         var formsContainer = $(formsContainerId);
         formsContainer.data('current-form-code', Constants.LOGIN_FORM_CODE);
         $(modalId).modal('show');
-        initFormsValidator(formsContainer.attr('id'));
     });
 
     $('#btn-show-sign-up-modal').on('click', function (event) {
@@ -38,7 +37,6 @@ $(document).ready(function () {
             $(modalId).trigger('set-form', Constants.REGISTER_FORM_CODE);
         });
         $(modalId).modal('show');
-        initFormsValidator(formsContainer.attr('id'));
     });
 
     $(document).on('submit', '#' + Constants.LOGIN_FORM_ID, function (e) {
@@ -65,46 +63,6 @@ $(document).ready(function () {
                     }
                 }
             });
-        }
-    });
-
-    $(document).on('click', '#btn-search-posts', function (e) {
-        e.preventDefault();
-        var searchQuery = $("#input-search-posts").val();
-        var postsContainerId = Constants.POSTS_CONTAINER_ID;
-        var btn = $(this);
-        if (searchQuery) {
-            btn.html('<i class="fa fa-spinner fa-spin fa-fw"></i>');
-            $.ajax({
-                "url": Laravel.apis.posts.list,
-                "method": "GET",
-                "data": {"query": searchQuery},
-                "success": function (response) {
-                    createPostsGrid(postsContainerId, response);
-                },
-                "error": function(jqXHR){console.log(jqXHR);},
-                "complete": function (jqXHR, textStatus) {
-                    btn.html('<i class="fa fa-search" aria-hidden="true"></i>');
-                }
-            });
-        }
-    });
-
-    $(document).on('keyup', '#input-search-posts', function(e){
-        if(e.which === 13){
-            $('#btn-search-posts').trigger('click');
-        }else{
-            var val = $(this).val();
-            if(!val){
-                $.ajax({
-                    "url": Laravel.apis.posts.list,
-                    "method": "GET",
-                    "success": function (response) {
-                        createPostsGrid(Constants.POSTS_CONTAINER_ID, response);
-                    },
-                    "error": function(jqXHR){console.log(jqXHR);}
-                });
-            }
         }
     });
 
@@ -161,23 +119,6 @@ $(document).ready(function () {
                 });
             });
         }
-    });
-
-    $(document).on('change', '#category-filter', function(){
-        var val = $(this).val();
-        var data = {};
-        if(val){data['category'] = val;}
-        $.ajax({
-            "url": Laravel.apis.posts.list,
-            "method": "GET",
-            "data": data,
-            "success": function (response) {
-                var postsContainerId = Constants.POSTS_CONTAINER_ID;
-                createPostsGrid(postsContainerId, response);
-            },
-            "error": function(jqXHR){console.log(jqXHR);},
-            "complete": function (jqXHR, textStatus) {}
-        });
     });
 
     $(document).on('click', ".btn-show-user-posts", function(e){

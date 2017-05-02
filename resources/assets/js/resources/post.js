@@ -1,5 +1,13 @@
 $(document).ready(function(){
 
+    window.viewPost = function(postId){
+        postId = parseInt(postId);
+        if(typeof(postId) === "number" && !isNaN(postId) ){
+            var url = getPostUrl(postId);
+            createPostModal(url, postId);
+        }
+    };
+
     $(document).on('click', '#btn-create-post', function(e){
         e.preventDefault();
         createPostCreateModal();
