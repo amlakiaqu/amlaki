@@ -44,9 +44,10 @@ class PostCreatedEvent implements ShouldBroadcast, ShouldQueue
         // TODO: write the logic to get the users ids to be notified
 //        return $this->message;
         return [
-            "post_id" => $this->message['post_id'],
+            "post_id" => (int) $this->message['post_id'],
             'user_ids' => [],
-            "show_for_all" => true
+            "show_for_all" => true,
+            "message" => "اعلان جديد"
         ];
     }
 }
