@@ -35,7 +35,7 @@
             'dir' => config('app.locale') == "ar" ? "rtl" : "ltr",
             'locale' => config('app.locale', 'en'),
             'config' => [
-                'postMediaImageCount' => 3,
+                'postMediaImageCount' => 0,
                 'postMediaImageRequiredCount' => 1,
                 'postMediaImageNamingTemplate' => 'MEDIA_IMAGE_{0}'
             ],
