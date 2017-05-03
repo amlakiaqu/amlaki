@@ -20,7 +20,7 @@
           <!-- ==== Recommended place for admin menu items ==== -->
           <!-- ================================================ -->
           <li><a href="{{ url(config('backpack.base.route_prefix', 'admin').'/dashboard') }}">{{ trans('backpack::base.dashboard') }}</a></li>
-          <li><a href="{{ url(config('backpack.base.route_prefix', 'admin') . '/elfinder') }}">File manager</a></li>
+{{--          <li><a href="{{ url(config('backpack.base.route_prefix', 'admin') . '/elfinder') }}">File manager</a></li>--}}
           <li><a href="{{ url(config('backpack.base.route_prefix', 'admin').'/log') }}">{{ trans('Logs')  }}</a></li>
 
           <li class="header">{{ trans('Management') }}</li>

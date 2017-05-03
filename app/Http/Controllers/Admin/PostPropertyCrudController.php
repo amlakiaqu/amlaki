@@ -48,8 +48,9 @@ class PostPropertyCrudController extends CrudController
             'attribute' => 'title', // foreign key attribute that is shown to user
             'model' => 'App\Property' // foreign key model
         ];
+
         $this->crud->addField($postFieldOptions, 'update/create/both')->beforeField('value');
-        $this->crud->addField($propertyFieldOptions, 'update/create/both')->afterField('property_id');
+        $this->crud->addField($propertyFieldOptions, 'update/create/both');
 
         // ------ CRUD COLUMNS
         $idColumnOptions = [
@@ -85,6 +86,7 @@ class PostPropertyCrudController extends CrudController
 
         $this->crud->with(["post", "property"]); // eager load relationships
         $this->crud->orderBy("id");
+
 
     }
 

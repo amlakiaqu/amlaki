@@ -80,8 +80,8 @@ class CategoryPropertyCrudController extends CrudController
         $this->crud->addField($categoryDisabledFieldOptions, 'update')->beforeField('required');
         $this->crud->addField($propertyDisableFieldOptions, 'update')->afterField('category_id');
 
-        $this->crud->addField($categoryFieldOptions, 'create')->afterField('required');
-        $this->crud->addField($propertyFieldOptions, 'create')->afterField('category_id');
+        $this->crud->addField($categoryFieldOptions, 'create');
+        $this->crud->addField($propertyFieldOptions, 'create');
 
         // ------ CRUD COLUMNS
         $idColumnOptions = [
