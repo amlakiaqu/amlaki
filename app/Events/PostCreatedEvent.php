@@ -28,6 +28,15 @@ class PostCreatedEvent implements ShouldBroadcast, ShouldQueue
     {
         $this->message = $message;
     }
+    /**
+     * The event's broadcast name.
+     *
+     * @return string
+     */
+    public function broadcastAs()
+    {
+        return 'my-event';
+    }
 
     /**
      * Get the channels the event should broadcast on.
